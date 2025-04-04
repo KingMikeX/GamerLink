@@ -24,7 +24,7 @@ Schritte Zum Starten:
     Somit sollte eigentlich alles installiert sein, falls ich nichts vergessen hab
 
     3. Zum Starten vom Frontend
-        > npm start
+        > npm run dev
 
     4. In einem anderen Terminal mit dem Plus rechts bei dem Terminal da wo Bash steht ein weiteres Terminal öffnen
         > cd ../Backend
