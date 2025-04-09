@@ -1,4 +1,52 @@
 export default function Register() {
+"use client";
+import { useState } from "react";
+
+// Login-Request-Funktion (mit deinem Backend-Endpunkt ersetzen)
+async function loginUser(email: string, password: string) {
+  try {
+    const response = await fetch("http://localhost:3000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Login fehlgeschlagen");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const userData = await loginUser(email, password);
+      console.log("Erfolgreich eingeloggt:", userData);
+      localStorage.setItem("token", userData.token);
+      window.location.href = "/dashboard";
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
         <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
