@@ -7,3 +7,7 @@ class UserCreate(BaseModel):
     username: UserName # type: ignore
     email: EmailStr
     password: PasswordStr # type: ignore
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
-
+from register_login.user_register_login import UserCreate, UserLogin
 from models.user import User
 from register_login.user_register_login import UserCreate
+from utils.jwt_handler import create_access_token
 
 # Passwort-Hashing-Kontext (bcrypt)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -41,4 +42,23 @@ def register_user(user_data: UserCreate, db: Session):
         "id": str(new_user.id),
         "username": new_user.username,
         "email": new_user.email
+    }
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def login_user(credentials: UserLogin, db: Session):
+    user = db.query(User).filter(User.email == credentials.email).first()
+
+    if not user or not verify_password(credentials.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="E-Mail oder Passwort ist ungültig"
+        )
+
+    token = create_access_token({"sub": str(user.id)})
+
+    return {
+    "access_token": token,
+    "token_type": "bearer"
     }
