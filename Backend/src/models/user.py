@@ -13,3 +13,7 @@ class User(Base):
     created_at = Column(TIMESTAMP, server_default=text("NOW()"))
     last_login = Column(TIMESTAMP, nullable=True)
     is_active = Column(Boolean, default=True)
+    
+    # 🆕 Rolle: 'User' oder 'Admin'
+    role = Column(String(20), nullable=False, default="User")
+
