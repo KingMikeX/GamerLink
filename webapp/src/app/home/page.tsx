@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { Search, Bell, MessageSquare, User, Settings, Lightning, Trophy, Users, Heart, MessageCircle, Share2, Bookmark, ChevronRight } from 'lucide-react';
+import { Search, Bell, MessageSquare, User, Settings, Trophy, Users, Heart, MessageCircle, Share2, Bookmark, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('TURNIERE');
