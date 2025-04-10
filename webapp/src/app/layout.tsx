@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Search, Bell, MessageSquare, User, Settings, Trophy, Users, Heart, MessageCircle, Share2, Bookmark, ChevronRight, BarChart3, UserCircle, Boxes, Package } from 'lucide-react';
-import Sidebar, { SidebarItem } from "@/components/Sidebar";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

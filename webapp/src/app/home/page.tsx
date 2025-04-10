@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { Search, Bell, MessageSquare, User, Settings, Trophy, Users, Heart, MessageCircle, Share2, Bookmark, ChevronRight, BarChart3, UserCircle, Boxes, Package } from 'lucide-react';
+import { Trophy, Users, Heart, MessageCircle, Share2, Bookmark, ChevronRight, BarChart3, UserCircle, Gamepad2, Swords } from 'lucide-react';
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
 
 export default function Home() {
@@ -38,15 +38,15 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#111535] ">
+    <div className="flex flex-col min-h-screen bg-[#1D1D20] ">
       <aside className='flex'>
         {/* Left Bar */}
         <div className='hidden lg:flex max-h-11/12'>
           <Sidebar>
-              <SidebarItem icon={<BarChart3 size={20} />} text="Statistics" active alert={undefined} />
-              <SidebarItem icon={<UserCircle size={20} />} text="Statistics" active alert={undefined} />
-              <SidebarItem icon={<Boxes size={20} />} text="Statistics" active alert={undefined} />
-              <SidebarItem icon={<Package size={20} />} text="Statistics" active alert={undefined} />
+              <SidebarItem icon={<BarChart3 size={20} />} text="Stats" active alert={undefined} />
+              <SidebarItem icon={<UserCircle size={20} />} text="Profil" active alert={undefined} />
+              <SidebarItem icon={<Swords size={20} />} text="Tournements" active alert={undefined} />
+              <SidebarItem icon={<Gamepad2 size={20} />} text="Games" active alert={undefined} />
           </Sidebar> 
         </div>
 
@@ -55,7 +55,7 @@ export default function Home() {
           {/* Middle Content */}
           <div className="flex-1 p-6 overflow-y-auto">
             {/* User Post - Card Style */}
-            <div className="mb-6 ml-10 mr-10 border shadow-xl bg-indigo-900/40 backdrop-blur-sm rounded-2xl border-indigo-700/30">
+            <div className="mb-6 ml-10 mr-10 border shadow-[3px_2px_7px_purple] bg-indigo-900/40 backdrop-blur-sm rounded-2xl border-indigo-700/30">
               <div className="flex items-center p-4">
                 <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-full shadow-inner bg-gradient-to-br from-indigo-600 to-purple-700">E</div>
                 <div className="ml-3">
@@ -97,11 +97,141 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <div className="mb-6 ml-10 mr-10 border shadow-[3px_2px_7px_purple] bg-indigo-900/40 backdrop-blur-sm rounded-2xl border-indigo-700/30">
+              <div className="flex items-center p-4">
+                <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-full shadow-inner bg-gradient-to-br from-indigo-600 to-purple-700">E</div>
+                <div className="ml-3">
+                  <h3 className="font-semibold text-white">ELITE_GAMER</h3>
+                  <p className="text-xs text-indigo-300">Turnier-Champion</p>
+                </div>
+                <div className="flex items-center ml-auto text-sm text-gray-400">
+                  <span className="bg-indigo-800/50 px-2 py-0.5 rounded-full text-xs">VOR 2 STUNDEN</span>
+                </div>
+              </div>
+              
+              {/* Post Content */}
+              <div className="relative flex items-center justify-center bg-gradient-to-b from-gray-800/80 to-gray-900/90 h-80">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 to-indigo-800/20">
+
+                </div>
+              </div>
+              
+              <div className="p-4 border-t bg-indigo-900/30 border-indigo-700/30">
+                <div className="flex justify-between">
+                  <div className="flex space-x-4">
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-pink-400">
+                      <Heart size={18} />
+                      <span className="text-sm">142</span>
+                    </button>
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-blue-400">
+                      <MessageCircle size={18} />
+                      <span className="text-sm">24</span>
+                    </button>
+                  </div>
+                  <div className="flex space-x-4">
+                    <button className="text-gray-300 transition-colors hover:text-green-400">
+                      <Share2 size={18} />
+                    </button>
+                    <button className="text-gray-300 transition-colors hover:text-yellow-400">
+                      <Bookmark size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6 ml-10 mr-10 border shadow-[3px_2px_7px_purple] bg-indigo-900/40 backdrop-blur-sm rounded-2xl border-indigo-700/30">
+              <div className="flex items-center p-4">
+                <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-full shadow-inner bg-gradient-to-br from-indigo-600 to-purple-700">E</div>
+                <div className="ml-3">
+                  <h3 className="font-semibold text-white">ELITE_GAMER</h3>
+                  <p className="text-xs text-indigo-300">Turnier-Champion</p>
+                </div>
+                <div className="flex items-center ml-auto text-sm text-gray-400">
+                  <span className="bg-indigo-800/50 px-2 py-0.5 rounded-full text-xs">VOR 2 STUNDEN</span>
+                </div>
+              </div>
+              
+              {/* Post Content */}
+              <div className="relative flex items-center justify-center bg-gradient-to-b from-gray-800/80 to-gray-900/90 h-80">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 to-indigo-800/20">
+
+                </div>
+              </div>
+              
+              <div className="p-4 border-t bg-indigo-900/30 border-indigo-700/30">
+                <div className="flex justify-between">
+                  <div className="flex space-x-4">
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-pink-400">
+                      <Heart size={18} />
+                      <span className="text-sm">142</span>
+                    </button>
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-blue-400">
+                      <MessageCircle size={18} />
+                      <span className="text-sm">24</span>
+                    </button>
+                  </div>
+                  <div className="flex space-x-4">
+                    <button className="text-gray-300 transition-colors hover:text-green-400">
+                      <Share2 size={18} />
+                    </button>
+                    <button className="text-gray-300 transition-colors hover:text-yellow-400">
+                      <Bookmark size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6 ml-10 mr-10 border shadow-[3px_2px_7px_purple] bg-indigo-900/40 backdrop-blur-sm rounded-2xl border-indigo-700/30">
+              <div className="flex items-center p-4">
+                <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-full shadow-inner bg-gradient-to-br from-indigo-600 to-purple-700">E</div>
+                <div className="ml-3">
+                  <h3 className="font-semibold text-white">ELITE_GAMER</h3>
+                  <p className="text-xs text-indigo-300">Turnier-Champion</p>
+                </div>
+                <div className="flex items-center ml-auto text-sm text-gray-400">
+                  <span className="bg-indigo-800/50 px-2 py-0.5 rounded-full text-xs">VOR 2 STUNDEN</span>
+                </div>
+              </div>
+              
+              {/* Post Content */}
+              <div className="relative flex items-center justify-center bg-gradient-to-b from-gray-800/80 to-gray-900/90 h-80">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 to-indigo-800/20">
+
+                </div>
+              </div>
+              
+              <div className="p-4 border-t bg-indigo-900/30 border-indigo-700/30">
+                <div className="flex justify-between">
+                  <div className="flex space-x-4">
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-pink-400">
+                      <Heart size={18} />
+                      <span className="text-sm">142</span>
+                    </button>
+                    <button className="flex items-center space-x-1 text-gray-300 transition-colors hover:text-blue-400">
+                      <MessageCircle size={18} />
+                      <span className="text-sm">24</span>
+                    </button>
+                  </div>
+                  <div className="flex space-x-4">
+                    <button className="text-gray-300 transition-colors hover:text-green-400">
+                      <Share2 size={18} />
+                    </button>
+                    <button className="text-gray-300 transition-colors hover:text-yellow-400">
+                      <Bookmark size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
           </div>
         </main>
 
         {/* Right Sidebar - Modern Card Style */}
-        <div className="bg-[#121428] w-96 p-6 hidden lg:block">
+        <div className="bg-[#121428] w-96 p-6 hidden md:block">
           {/* Upcoming Tournaments */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -131,14 +261,12 @@ export default function Home() {
             </div>
             
             <div className="ml-10 mr-10">
-              <button className="w-full py-3 mt-6 text-white transition-all shadow-md bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl">
+              <button className="w-full py-3 mt-6 text-white transition-all shadow-md hover:transition-colors hover:ease-initial hover:delay-100 hover:duration-500 hover:bg-gradient-to-r hover:from-pink-700 hover:to-purple-500 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl">
                 <span className='font-semibold font-stretch-150%'>Turnier erstellen</span>
               </button>
             </div>
           </div>
           
-
-
           {/* Trending Games */}
           <div className="pt-5 mb-8 border-t-2 border-t-gray-500">
             <div className="flex items-center justify-between mb-6">
