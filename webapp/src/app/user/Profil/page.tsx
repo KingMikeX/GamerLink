@@ -43,15 +43,15 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#0D0F23] text-white px-4 py-8">
       <div className="max-w-3xl mx-auto bg-[#1A1C2D] p-8 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-white mb-8 text-center">Profilverwaltung</h1>
+        <h1 className="mb-8 text-3xl font-bold text-center text-white">Profilverwaltung</h1>
 
         {/* Bild */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#D047FF] shadow-lg mb-3">
             {imagePreview ? (
-              <img src={imagePreview} className="w-full h-full object-cover" alt="Profilbild" />
+              <img src={imagePreview} className="object-cover w-full h-full" alt="Profilbild" />
             ) : (
-              <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-300">Kein Bild</div>
+              <div className="flex items-center justify-center w-full h-full text-gray-300 bg-gray-700">Kein Bild</div>
             )}
           </div>
           <input type="file" accept="image/*" onChange={handleImageUpload} className="text-sm" />

@@ -1,4 +1,3 @@
-"use client"
 
 import { MoreVertical, ChevronLast, ChevronFirst } from "lucide-react"
 import { useContext, createContext, useState } from "react"
@@ -10,11 +9,11 @@ export default function Sidebar({ children }) {
   
   return (
     <aside className="h-full">
-      <nav className="h-full flex flex-col bg-[#1e1e39] border-r shadow-sm">
-        <div className="p-4 pb-2 flex justify-between items-center">
+      <nav className="h-full flex flex-col bg-[#121428] shadow-sm">
+        <div className="flex items-center justify-between p-4 pb-2">
           <button
             onClick={() => setExpanded((curr) => !curr)}
-            className="p-1.5 rounded-lg bg-gray-500 hover:bg-gray-400"
+            className="p-1.5 rounded-lg hover:bg-[#252641] bg-[#121428]"
           >
             {expanded ? <ChevronFirst /> : <ChevronLast />}
           </button>
@@ -24,7 +23,7 @@ export default function Sidebar({ children }) {
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
 
-        <div className="border-t flex p-3">
+        <div className="flex p-3 border-t">
           <img
             src="https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true" alt="" className="w-10 h-10 rounded-md"/>
           <div
@@ -51,7 +50,7 @@ export function SidebarItem({ icon, text, active, alert }) {
   return (
     <li
       className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer
-                  transition-colors group bg-[#252641] hover:bg-[#3f416e]`}>
+                  transition-colors group hover:bg-[#252641] bg-[#121428]`}>
       {icon}
       <span
         className={`overflow-hidden transition-all ${

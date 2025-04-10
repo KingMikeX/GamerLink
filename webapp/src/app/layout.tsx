@@ -28,25 +28,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <nav className="bg-[#252641] text-white p-3 flex items-center justify-between z-10">
+        
+        {/* Nav Bar */}
+        <nav className="bg-[#121428] text-white p-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-gray-300 rounded">
-              {/* Logo hier - ersetze mit deinem tatsächlichen Logo */}
-              <div className="h-full w-full bg-gray-300"></div>
+            <div className="flex items-center gap-2">
+              <img src="/logo.webp" alt="GamerLink Logo" className="w-52 " />
             </div>
-            <span className="text-lg font-bold">GamerLink</span>
           </div>
 
-          <div className="flex-1 max-w-md mx-auto justify-center">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="SUCHE NACH SPIELEN, SPIELER ODER TURNIEREN..."
-                className="w-full bg-[#2a2a4a] text-white px-10 py-2 rounded-full text-sm"/>
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          {/* Search Bar */}
+          <div className="justify-center flex-1 hidden lg:flex ">
+            <div className="flex w-xl max-w-[400px] align-middle relative">
+              <input type="text" placeholder="SUCHE NACH SPIELEN, SPIELER ODER TURNIEREN..." className="w-full bg-[#2a2a4a] text-white px-10 py-2 rounded-full text-sm"/>
+              <div className="absolute transform -translate-y-1/2 left-3 top-1/2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-400"
+                  className="w-5 h-5 text-gray-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -62,13 +60,14 @@ export default function RootLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-5 sm:hidden">
+          {/* Drei Balken mobile Ansicht */}
+          <div className="flex items-center gap-5 lg:hidden">
             
             {/* Hamburger Menü für mobile Ansicht */}
-            <button className="sm:hidden">
+            <button className="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="w-6 h-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
