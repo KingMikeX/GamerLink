@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, Text
+from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, Text, Boolean, Date
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 import uuid
 from sqlalchemy import text
@@ -16,4 +16,15 @@ class UserProfile(Base):
     platform = Column(String(50))         # z.B. "PC", "PS5"
     region = Column(String(50))           # z.B. "EUW", "NA"
     bio = Column(Text)
+    profile_picture = Column(String, nullable=True)  # URL oder Dateipfad für das Profilbild
+    birthdate = Column(Date, nullable=True)
+    languages = Column(ARRAY(String(50)))  # z.B. ["Deutsch", "Englisch"]
+    discord = Column(String(100))
+    steam = Column(String(100))
+    twitch = Column(String(100))
+    youtube = Column(String(100))
+    is_public = Column(Boolean, default=True)
+    is_online = Column(Boolean, default=False)
+    allow_notifications = Column(Boolean, default=True)
+    allow_friend_requests = Column(Boolean, default=True)
     created_at = Column(TIMESTAMP, server_default=text("NOW()"))

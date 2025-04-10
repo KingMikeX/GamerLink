@@ -69,9 +69,15 @@ def login_user(credentials: UserLogin, db: Session):
             detail="E-Mail oder Passwort ist ungültig"
         )
 
+    # ✅ Benutzerprofil holen und is_online setzen
+    profile = db.query(UserProfile).filter_by(user_id=user.id).first()
+    if profile:
+        profile.is_online = True
+        db.commit()
+
     token = create_access_token({"sub": str(user.id)})
 
     return {
-    "access_token": token,
-    "token_type": "bearer"
+        "access_token": token,
+        "token_type": "bearer"
     }
