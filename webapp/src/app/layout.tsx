@@ -27,18 +27,18 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         
         {/* Nav Bar */}
-        <nav className="bg-[#121428] text-white p-3 flex items-center justify-between z-10">
+        <nav className="z-10 flex justify-between items-center bg-[#121428] p-3 text-white">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
-              <img src="/logo.webp" alt="GamerLink Logo" className="w-52 " />
+              <img src="/logo.webp" alt="GamerLink Logo" className="w-52" />
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="justify-center flex-1 hidden lg:flex ">
-            <div className="flex w-xl max-w-[400px] align-middle relative">
-              <input type="text" placeholder="SUCHE NACH SPIELEN, SPIELER ODER TURNIEREN..." className="w-full bg-[#2a2a4a] text-white px-10 py-2 rounded-full text-sm"/>
-              <div className="absolute transform -translate-y-1/2 left-3 top-1/2">
+          <div className="hidden lg:flex flex-1 justify-center">
+            <div className="relative flex w-xl max-w-[400px] align-middle">
+              <input type="text" placeholder="SUCHE NACH SPIELEN, SPIELER ODER TURNIEREN..." className="bg-[#2a2a4a] px-10 py-2 rounded-full w-full text-white text-sm"/>
+              <div className="top-1/2 left-3 absolute -translate-y-1/2 transform">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-5 h-5 text-gray-400"
@@ -58,7 +58,7 @@ export default function RootLayout({
           </div>
 
           {/* Drei Balken mobile Ansicht */}
-          <div className="flex items-center gap-5 lg:hidden">
+          <div className="lg:hidden flex items-center gap-5">
             
             {/* Hamburger Menü für mobile Ansicht */}
             <button className="">

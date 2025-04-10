@@ -9,8 +9,8 @@ export default function Sidebar({ children }) {
   const [expanded, setExpanded] = useState(true)
 
   return (
-    <aside className="max-h-11/12">
-      <nav className="flex flex-col bg-[#121428] shadow-sm pt-12 h-full">
+    <aside className="h-screen">
+      <nav className="flex bg-[#121428] shadow-sm">
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
