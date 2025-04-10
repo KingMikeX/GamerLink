@@ -46,7 +46,6 @@ export default function Home() {
     <div className="flex">
       {/* Left Sidebar - Fixed */}
       <FullSideBar which_Page={selectedPage[2]}/>
-
       {/* Main Content Area */}
       
     </div>
