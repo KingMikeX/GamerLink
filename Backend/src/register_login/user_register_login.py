@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, constr
 from typing import Optional, List
 from typing import Optional, List
 from pydantic import BaseModel
+from datetime import date
 
 UserName: type = constr(min_length=3, max_length=50)
 PasswordStr: type = constr(min_length=6)
@@ -23,16 +24,43 @@ class UserProfileUpdate(BaseModel):
     platform: Optional[str] = None
     favorite_games: Optional[List[str]] = None
     bio: Optional[str] = None
+    profile_picture: Optional[str] = None
+
+    birthdate: Optional[date] = None
+    languages: Optional[List[str]] = None
+
+    discord: Optional[str] = None
+    steam: Optional[str] = None
+    twitch: Optional[str] = None
+    youtube: Optional[str] = None
+
+    is_public: Optional[bool] = None
+    is_online: Optional[bool] = None
+    allow_notifications: Optional[bool] = None
+    allow_friend_requests: Optional[bool] = None
 
 class PublicUserProfile(BaseModel):
-    username: str
-    region: Optional[str]
-    main_game: Optional[str]
-    rank: Optional[str]
-    play_style: Optional[str]
-    platform: Optional[str]
-    favorite_games: Optional[List[str]]
-    bio: Optional[str]
+    region: Optional[str] = None
+    main_game: Optional[str] = None
+    rank: Optional[str] = None
+    play_style: Optional[str] = None
+    platform: Optional[str] = None
+    favorite_games: Optional[List[str]] = None
+    bio: Optional[str] = None
+    profile_picture: Optional[str] = None
+
+    birthdate: Optional[date] = None
+    languages: Optional[List[str]] = None
+
+    discord: Optional[str] = None
+    steam: Optional[str] = None
+    twitch: Optional[str] = None
+    youtube: Optional[str] = None
+
+    is_public: Optional[bool] = None
+    is_online: Optional[bool] = None
+    allow_notifications: Optional[bool] = None
+    allow_friend_requests: Optional[bool] = None
 
     class Config:
         orm_mode = True

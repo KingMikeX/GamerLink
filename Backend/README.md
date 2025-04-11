@@ -29,9 +29,12 @@ source venv/bin/activate
 
 DB_USER=postgres
 DB_PASSWORD=passwort
-DB_HOST=loclahost
+DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=postgres
+JWT_EXPIRATION_MINUTES=60
+JWT_ALGORITHM=HS256
+JWT_SECRET=ein_langer_geheimer_schlüssel
 
 
 
