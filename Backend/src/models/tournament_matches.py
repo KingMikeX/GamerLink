@@ -12,6 +12,7 @@ class TournamentMatch(Base):
     team_a_id = Column(UUID(as_uuid=True), ForeignKey("tournament_teams.id", ondelete="CASCADE"), nullable=False)
     team_b_id = Column(UUID(as_uuid=True), ForeignKey("tournament_teams.id", ondelete="CASCADE"), nullable=False)
     matchday = Column(Integer, nullable=False)
+    winner_team_id = Column(UUID(as_uuid=True), ForeignKey("tournament_teams.id"), nullable=True)
 
     score_team_a = Column(Integer, default=0)
     score_team_b = Column(Integer, default=0)
