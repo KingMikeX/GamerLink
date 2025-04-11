@@ -23,3 +23,10 @@ CREATE TABLE user_profile (
     bio TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+ALTER TABLE tournament_participants
+ADD COLUMN team_id UUID REFERENCES tournament_teams(id) ON DELETE SET NULL;
+
+ALTER TABLE tournaments
+ADD COLUMN teamanzahl INTEGER NOT NULL DEFAULT 2,
+ADD COLUMN teamgröße INTEGER NOT NULL DEFAULT 1;

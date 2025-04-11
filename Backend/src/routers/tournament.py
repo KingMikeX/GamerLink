@@ -2,13 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
 from datetime import datetime, timezone
+from itertools import combinations
 
 from models.tournament_data import Tournament
 from models.tournament_participant import TournamentParticipant
+from models.tournament_team import TournamentTeam
+from models.tournament_results import TournamentResult
+from models.tournament_matches import TournamentMatch
 from models.user import User
 from utils.auth_dependencies import get_current_user, get_db
 from pydantic import BaseModel, constr, field_validator
 from typing import Annotated, List
+from typing import Optional
 
 tournament_router = APIRouter(
     prefix="/tournaments",
@@ -22,8 +27,9 @@ class TournamentCreate(BaseModel):
     niveau: str
     start_time: datetime
     duration_minutes: int
-    max_players: int
     description: str
+    teamanzahl: int
+    teamgröße: int 
 
 
     @field_validator("start_time")
@@ -34,6 +40,17 @@ class TournamentCreate(BaseModel):
             raise ValueError("Startzeitpunkt darf nicht in der Vergangenheit liegen.")
         return value
 
+class MatchOut(BaseModel):
+    id: UUID
+    team_a_name: str
+    team_b_name: str
+    is_played: bool
+    played_at: Optional[datetime]
+    winner_team_id: Optional[UUID]
+    match_day: int
+
+    class Config:
+        from_attributes = True
 
 class TournamentOut(BaseModel):
     id: UUID
@@ -58,7 +75,8 @@ class ParticipantOut(BaseModel):
     class Config:
         from_attributes = True
 
-
+class MatchResultIn(BaseModel):
+    winner_team_id: Optional[UUID] = None  # ⬅️ Wenn None, ist es ein Unentschieden
 
 class MyTournamentOut(BaseModel):
     id: UUID
@@ -76,8 +94,11 @@ class MyTournamentOut(BaseModel):
         from_attributes = True
 
 
+class JoinTournamentRequest(BaseModel):
+    team_id: UUID
 
 
+from models.tournament_results import TournamentResult
 
 @tournament_router.post("/create")
 def create_tournament(
@@ -85,12 +106,8 @@ def create_tournament(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Nur Admins dürfen Turniere erstellen
     if current_user.role != "Admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Nur Admins dürfen Turniere erstellen."
-        )
+        raise HTTPException(status_code=403, detail="Nur Admins dürfen Turniere erstellen.")
 
     tournament = Tournament(
         name=tournament_data.name,
@@ -98,19 +115,59 @@ def create_tournament(
         niveau=tournament_data.niveau,
         start_time=tournament_data.start_time,
         duration_minutes=tournament_data.duration_minutes,
-        max_players=tournament_data.max_players,
+        max_players=tournament_data.teamanzahl * tournament_data.teamgröße,
         description=tournament_data.description,
+        teamanzahl=tournament_data.teamanzahl,
+        teamgröße=tournament_data.teamgröße,
         created_by=current_user.id
     )
-
     db.add(tournament)
     db.commit()
     db.refresh(tournament)
 
+    # 🔄 Teams und Ergebnisse anlegen
+    team_objs = []
+    for i in range(1, tournament.teamanzahl + 1):
+        team = TournamentTeam(
+            tournament_id=tournament.id,
+            name=f"Team {i}"
+        )
+        db.add(team)
+        db.commit()
+        db.refresh(team)
+        team_objs.append(team)
+
+        result_entry = TournamentResult(
+            tournament_id=tournament.id,
+            team_id=team.id
+        )
+        db.add(result_entry)
+
+    db.commit()
+
+    # 🔁 Spielplan mit Spieltagen (round-robin)
+    team_pairs = list(combinations(team_objs, 2))
+    matchday = 1
+    matches_per_day = len(team_objs) // 2 or 1  # mindestens 1 Match pro Tag
+
+    for i, (team_a, team_b) in enumerate(team_pairs):
+        if i % matches_per_day == 0:
+            matchday += 1
+        match = TournamentMatch(
+            tournament_id=tournament.id,
+            team_a_id=team_a.id,
+            team_b_id=team_b.id,
+            matchday=matchday
+        )
+        db.add(match)
+
+    db.commit()
+
     return {
-        "message": "Turnier erfolgreich erstellt.",
+        "message": "Turnier inkl. Teams und Spielplan erfolgreich erstellt.",
         "tournament_id": str(tournament.id)
     }
+
 
 
 
@@ -177,58 +234,54 @@ def get_tournaments_created_by_me(
 @tournament_router.post("/{tournament_id}/join")
 def join_tournament(
     tournament_id: UUID,
+    join_data: JoinTournamentRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # ⛔ Turnierprüfung
     tournament = db.query(Tournament).filter(Tournament.id == tournament_id).first()
-
     if not tournament:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Turnier wurde nicht gefunden."
-        )
+        raise HTTPException(status_code=404, detail="Turnier nicht gefunden")
 
-    # 🕒 Zeitcheck: Beitritt nur vor Start
-    now = datetime.now(timezone.utc)
-    if tournament.start_time <= now:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Das Turnier hat bereits begonnen."
-        )
+    # ⛔ Zeitprüfung
+    if tournament.start_time <= datetime.now(timezone.utc):
+        raise HTTPException(status_code=403, detail="Das Turnier hat bereits begonnen.")
 
-    # 🧍‍♂️ Duplikatscheck: User ist schon Teilnehmer
+    # ⛔ Schon Teilnehmer?
     already_joined = db.query(TournamentParticipant).filter_by(
         tournament_id=tournament_id,
         user_id=current_user.id
     ).first()
-
     if already_joined:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Du nimmst bereits an diesem Turnier teil."
-        )
-
-    # 👥 Max-Teilnehmer prüfen
-    participant_count = db.query(TournamentParticipant).filter_by(
+        raise HTTPException(status_code=400, detail="Du bist bereits Teilnehmer.")
+    
+    # ⛔ Turnier voll?
+    total_participants = db.query(TournamentParticipant).filter_by(
         tournament_id=tournament_id
     ).count()
+    if total_participants >= tournament.max_players:
+        raise HTTPException(status_code=403, detail="Das Turnier ist bereits voll.")
 
-    if participant_count >= tournament.max_players:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Maximale Teilnehmerzahl erreicht."
-        )
+    # ⛔ Team prüfen
+    team = db.query(TournamentTeam).filter_by(id=join_data.team_id, tournament_id=tournament_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team nicht gefunden.")
 
-    # 🎫 Teilnahme speichern
-    join_entry = TournamentParticipant(
+    # ⛔ Team voll?
+    member_count = db.query(TournamentParticipant).filter_by(team_id=team.id).count()
+    if member_count >= tournament.teamgröße:
+        raise HTTPException(status_code=403, detail="Das gewählte Team ist bereits voll.")
+
+    # ✅ Teilnahme speichern
+    entry = TournamentParticipant(
         tournament_id=tournament_id,
-        user_id=current_user.id
+        user_id=current_user.id,
+        team_id=team.id
     )
-
-    db.add(join_entry)
+    db.add(entry)
     db.commit()
 
-    return {"message": "Du hast dich erfolgreich für das Turnier angemeldet."}
+    return {"message": f"Du bist dem Team '{team.name}' erfolgreich beigetreten."}
 
 
 @tournament_router.get("/", response_model=List[MyTournamentOut])
@@ -423,3 +476,84 @@ def remove_participant(
     db.commit()
 
     return {"message": "Teilnehmer wurde entfernt."}
+
+@tournament_router.post("/{tournament_id}/matches/{match_id}/result")
+def set_match_result(
+    tournament_id: UUID,
+    match_id: UUID,
+    result_data: MatchResultIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 🔐 Nur Admins erlaubt
+    if current_user.role != "Admin":
+        raise HTTPException(status_code=403, detail="Nur Admins dürfen Ergebnisse eintragen.")
+
+    # 🔎 Match holen
+    match = db.query(TournamentMatch).filter_by(id=match_id, tournament_id=tournament_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match nicht gefunden.")
+    
+    if match.is_played:
+        raise HTTPException(status_code=400, detail="Dieses Match wurde bereits gewertet.")
+
+    # 🔢 Punktevergabe vorbereiten
+    team_a = db.query(TournamentTeam).filter_by(id=match.team_a_id).first()
+    team_b = db.query(TournamentTeam).filter_by(id=match.team_b_id).first()
+
+    if not team_a or not team_b:
+        raise HTTPException(status_code=404, detail="Mindestens ein Team nicht gefunden.")
+
+    if result_data.winner_team_id is None:
+        # 🟡 Unentschieden
+        team_a.points += 1
+        team_b.points += 1
+    elif result_data.winner_team_id == team_a.id:
+        team_a.points += 3
+    elif result_data.winner_team_id == team_b.id:
+        team_b.points += 3
+    else:
+        raise HTTPException(status_code=400, detail="Sieger-Team gehört nicht zu diesem Match.")
+
+    # 🎯 Matches gezählt
+    team_a.matches_played += 1
+    team_b.matches_played += 1
+
+    # ✅ Ergebnis speichern
+    match.is_played = True
+    match.played_at = datetime.now(timezone.utc)
+    match.winner_team_id = result_data.winner_team_id
+
+    db.commit()
+
+    return {"message": "Ergebnis wurde erfolgreich eingetragen."}
+
+@tournament_router.get("/{tournament_id}/matches", response_model=List[MatchOut])
+def get_tournament_matches(
+    tournament_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    tournament = db.query(Tournament).filter_by(id=tournament_id).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Turnier nicht gefunden.")
+
+    # Alle Matches holen
+    matches = db.query(TournamentMatch).filter_by(tournament_id=tournament_id).order_by(TournamentMatch.match_day.asc()).all()
+
+    result = []
+    for match in matches:
+        team_a = db.query(TournamentTeam).filter_by(id=match.team_a_id).first()
+        team_b = db.query(TournamentTeam).filter_by(id=match.team_b_id).first()
+
+        result.append(MatchOut(
+            id=match.id,
+            team_a_name=team_a.name if team_a else "Unbekannt",
+            team_b_name=team_b.name if team_b else "Unbekannt",
+            is_played=match.is_played,
+            played_at=match.played_at,
+            winner_team_id=match.winner_team_id,
+            match_day=match.match_day
+        ))
+
+    return result
