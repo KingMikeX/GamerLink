@@ -77,11 +77,12 @@ export default function Login() {
           <img
             src="/logo.webp"
             alt="GamerLink Logo"
-            className="mx-auto h-35 w-auto"
+            className="mx-auto h-33 w-200"
           />
-          <p className="uppercase tracking-wide text-sm text-gray-300 mt-2">
-            Login
-          </p>
+          <p className="uppercase tracking-widest text-sm font-black text-white mb-6">
+  Login
+</p>
+
         </div>
 
         {/* Google Login */}
@@ -127,11 +128,11 @@ export default function Login() {
 
         {/* Divider */}
         <div className="flex items-center my-4">
-          <hr className="flex-grow border-pink-500" />
-          <span className="mx-4 text-xs text-gray-400 uppercase font-medium">
+          <hr className="flex-grow border-pink-400" />
+          <span className="mx-4 text-xs text-white uppercase font-medium">
             or sign in with e-mail
           </span>
-          <hr className="flex-grow border-pink-500" />
+          <hr className="flex-grow border-pink-400" />
         </div>
 
         {/* Login Form */}
@@ -173,7 +174,7 @@ export default function Login() {
 
 <div className="text-sm text-center text-gray-300">
   Don’t have an account yet?{" "}
-  <Link href="/user/register" className="text-[#D047FF] hover:underline font-medium">
+  <Link href="/user/register" className="text-[#da4ecc] hover:underline font-medium">
     Register
   </Link>
 </div>
@@ -182,7 +183,7 @@ export default function Login() {
   type="submit"
   disabled={loading || emailError || passwordError ? true : false}
   onClick={handleLogin}
-  className="w-full py-2 bg-[#D047FF] hover:bg-[#b43ede] text-white font-semibold rounded-md transition"
+  className="w-full py-2 bg-[#dd17c9] hover:bg-[#da4ecc] text-white font-semibold rounded-md transition"
 >
   {loading ? "Lade..." : "Login"}
 </button>
@@ -191,8 +192,8 @@ export default function Login() {
         {/* Disclaimer */}
         <p className="text-xs text-center text-gray-400 mt-4">
           I agree to abide by templatana’s{" "}
-          <a href="#" className="underline text-[#D047FF]">Terms of Service</a> and{" "}
-          <a href="#" className="underline text-[#D047FF]">Privacy Policy</a>.
+          <a href="#" className="underline text-[#text-gray-400]">Terms of Service</a> and{" "}
+          <a href="#" className="underline text-[#text-gray-400]">Privacy Policy</a>.
         </p>
       </div>
     </div>
