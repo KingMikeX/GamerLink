@@ -9,7 +9,7 @@ class TournamentTeam(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tournament_id = Column(UUID(as_uuid=True), ForeignKey("tournaments.id", ondelete="CASCADE"), nullable=False)
-    teamname = Column(String(100), nullable=False)
+    name = Column(String(100), nullable=False)
     color = Column(String(30), nullable=True)
 
     # Optional: Relationship für späteren Zugriff

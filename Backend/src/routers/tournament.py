@@ -29,7 +29,7 @@ class TournamentCreate(BaseModel):
     duration_minutes: int
     description: str
     teamanzahl: int
-    teamgröße: int 
+    teamgroeße: int 
 
 
     @field_validator("start_time")
@@ -47,7 +47,7 @@ class MatchOut(BaseModel):
     is_played: bool
     played_at: Optional[datetime]
     winner_team_id: Optional[UUID]
-    match_day: int
+    matchday: int
 
     class Config:
         from_attributes = True
@@ -115,17 +115,17 @@ def create_tournament(
         niveau=tournament_data.niveau,
         start_time=tournament_data.start_time,
         duration_minutes=tournament_data.duration_minutes,
-        max_players=tournament_data.teamanzahl * tournament_data.teamgröße,
+        max_players=tournament_data.teamanzahl * tournament_data.teamgroeße,
         description=tournament_data.description,
         teamanzahl=tournament_data.teamanzahl,
-        teamgröße=tournament_data.teamgröße,
+        teamgroeße=tournament_data.teamgroeße,
         created_by=current_user.id
     )
     db.add(tournament)
     db.commit()
     db.refresh(tournament)
 
-    # 🔄 Teams und Ergebnisse anlegen
+    # 🔄 Teams anlegen (nur einmaliges Commit!)
     team_objs = []
     for i in range(1, tournament.teamanzahl + 1):
         team = TournamentTeam(
@@ -133,10 +133,12 @@ def create_tournament(
             name=f"Team {i}"
         )
         db.add(team)
-        db.commit()
-        db.refresh(team)
         team_objs.append(team)
 
+    db.commit()
+
+    # ⏺️ Ergebnisse anlegen
+    for team in team_objs:
         result_entry = TournamentResult(
             tournament_id=tournament.id,
             team_id=team.id
@@ -269,7 +271,7 @@ def join_tournament(
 
     # ⛔ Team voll?
     member_count = db.query(TournamentParticipant).filter_by(team_id=team.id).count()
-    if member_count >= tournament.teamgröße:
+    if member_count >= tournament.teamgroeße:
         raise HTTPException(status_code=403, detail="Das gewählte Team ist bereits voll.")
 
     # ✅ Teilnahme speichern
@@ -494,7 +496,7 @@ def set_match_result(
     if not match:
         raise HTTPException(status_code=404, detail="Match nicht gefunden.")
     
-    if match.is_played:
+    if match.played:
         raise HTTPException(status_code=400, detail="Dieses Match wurde bereits gewertet.")
 
     # 🔢 Punktevergabe vorbereiten
@@ -520,7 +522,7 @@ def set_match_result(
     team_b.matches_played += 1
 
     # ✅ Ergebnis speichern
-    match.is_played = True
+    matches_played = True
     match.played_at = datetime.now(timezone.utc)
     match.winner_team_id = result_data.winner_team_id
 
@@ -539,7 +541,7 @@ def get_tournament_matches(
         raise HTTPException(status_code=404, detail="Turnier nicht gefunden.")
 
     # Alle Matches holen
-    matches = db.query(TournamentMatch).filter_by(tournament_id=tournament_id).order_by(TournamentMatch.match_day.asc()).all()
+    matches = db.query(TournamentMatch).filter_by(tournament_id=tournament_id).order_by(TournamentMatch.matchday.asc()).all()
 
     result = []
     for match in matches:
@@ -550,10 +552,10 @@ def get_tournament_matches(
             id=match.id,
             team_a_name=team_a.name if team_a else "Unbekannt",
             team_b_name=team_b.name if team_b else "Unbekannt",
-            is_played=match.is_played,
+            is_played=match.played,
             played_at=match.played_at,
             winner_team_id=match.winner_team_id,
-            match_day=match.match_day
+            matchday=match.matchday
         ))
 
     return result

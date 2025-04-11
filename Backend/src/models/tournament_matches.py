@@ -16,3 +16,4 @@ class TournamentMatch(Base):
     score_team_a = Column(Integer, default=0)
     score_team_b = Column(Integer, default=0)
     played = Column(Boolean, default=False)
+    played_at = Column(TIMESTAMP(timezone=True), nullable=True)

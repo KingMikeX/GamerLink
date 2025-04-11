@@ -13,10 +13,10 @@ class Tournament(Base):
     niveau = Column(String(50), nullable=False)  # z. B. "Anfänger", "Profi"
     start_time = Column(TIMESTAMP(timezone=True), nullable=False)
     duration_minutes = Column(Integer, nullable=False)
-    max_players = Column(Integer, nullable=False)
+    max_players = Column(Integer)
     description = Column(Text)
     teamanzahl = Column(Integer, nullable=False, default=2)
-    teamgröße = Column(Integer, nullable=False, default=1)
+    teamgroeße = Column(Integer, nullable=False, default=1)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
     
     # Der Admin, der es erstellt hat
