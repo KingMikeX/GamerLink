@@ -9,7 +9,7 @@ export default function FullSideBar({which_Page}) {
   const router = useRouter()
 
   const goToProfil = () => {
-    router.push('/user/Profil')
+    router.push('/user/profil')
   }
 
   const goToTournaments = () => {
@@ -29,7 +29,7 @@ export default function FullSideBar({which_Page}) {
   }
 
   var selectedPage = {
-    '/user/Profile': 0,
+    '/user/profile': 0,
     '/home': 1,
     '/tournements/list': 2,
     '/user/friends': 3,

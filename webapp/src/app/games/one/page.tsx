@@ -35,7 +35,7 @@ export default function Home() {
   ];
 
   var selectedPage = {
-    0: '/user/Profile',
+    0: '/user/profile',
     1: '/home',
     2: '/tournements/list',
     3: '/user/friends',
