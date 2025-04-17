@@ -1,21 +1,21 @@
 export default function Register() {
     return (
-      <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
-          <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
-              <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+      <div className="flex justify-center min-h-screen text-gray-900 bg-gray-100">
+          <div className="flex justify-center flex-1 max-w-screen-xl m-0 bg-white shadow sm:m-10 sm:rounded-lg">
+              <div className="p-6 lg:w-1/2 xl:w-5/12 sm:p-12">
                   <div>
                       <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.browsercam.com%2Fgg.gamerlink.gamerlink-header.png&f=1&nofb=1&ipt=2ae02f0b6575ff7e1d1b0ee9bd3e86fd8a404b749e6c1f20789957f41420a22b&ipo=images"
                           className="w-32 mx-auto" />
                   </div>
-                  <div className="mt-12 flex flex-col items-center">
-                      <h1 className="text-2xl xl:text-3xl font-extrabold">
+                  <div className="flex flex-col items-center mt-12">
+                      <h1 className="text-2xl font-extrabold xl:text-3xl">
                           Sign up
                       </h1>
-                      <div className="w-full flex-1 mt-8">
+                      <div className="flex-1 w-full mt-8">
                           <div className="flex flex-col items-center">
                               <button
-                                  className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
-                                  <div className="bg-white p-2 rounded-full">
+                                  className="flex items-center justify-center w-full max-w-xs py-3 font-bold text-gray-800 transition-all duration-300 ease-in-out bg-indigo-100 rounded-lg shadow-sm focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
+                                  <div className="p-2 bg-white rounded-full">
                                       <svg className="w-4" viewBox="0 0 533.5 544.3">
                                           <path
                                               d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z"
@@ -37,8 +37,8 @@ export default function Register() {
                               </button>
   
                               <button
-                                  className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5">
-                                  <div className="bg-white p-1 rounded-full">
+                                  className="flex items-center justify-center w-full max-w-xs py-3 mt-5 font-bold text-gray-800 transition-all duration-300 ease-in-out bg-indigo-100 rounded-lg shadow-sm focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
+                                  <div className="p-1 bg-white rounded-full">
                                       <svg className="w-6" viewBox="0 0 32 32">
                                           
                                       </svg>
@@ -49,22 +49,22 @@ export default function Register() {
                               </button>
                           </div>
   
-                          <div className="my-12 border-b text-center">
+                          <div className="my-12 text-center border-b">
                               <div
-                                  className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
+                                  className="inline-block px-2 text-sm font-medium leading-none tracking-wide text-gray-600 transform translate-y-1/2 bg-white">
                                   Or sign up with e-mail
                               </div>
                           </div>
   
-                          <div className="mx-auto max-w-xs">
+                          <div className="max-w-xs mx-auto">
                               <input
-                                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                  className="w-full px-8 py-4 text-sm font-medium placeholder-gray-500 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:bg-white"
                                   type="email" placeholder="Email" />
                               <input
-                                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                  className="w-full px-8 py-4 mt-5 text-sm font-medium placeholder-gray-500 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:bg-white"
                                   type="password" placeholder="Password" />
                               <button
-                                  className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                                  className="flex items-center justify-center w-full py-4 mt-5 font-semibold tracking-wide text-gray-100 transition-all duration-300 ease-in-out bg-indigo-500 rounded-lg hover:bg-indigo-700 focus:shadow-outline focus:outline-none">
                                   <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
                                       stroke-linecap="round" stroke-linejoin="round">
                                       <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -75,7 +75,7 @@ export default function Register() {
                                       Sign Up
                                   </span>
                               </button>
-                              <p className="mt-6 text-xs text-gray-600 text-center">
+                              <p className="mt-6 text-xs text-center text-gray-600">
                                   I agree to abide by templatana's
                                   <a href="#" className="border-b border-gray-500 border-dotted">
                                       Terms of Service
@@ -89,8 +89,8 @@ export default function Register() {
                       </div>
                   </div>
               </div>
-              <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
-                  <div className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat">
+              <div className="flex-1 hidden text-center bg-indigo-100 lg:flex">
+                  <div className="w-full m-12 bg-center bg-no-repeat bg-contain xl:m-16">
                   </div>
               </div>
           </div>

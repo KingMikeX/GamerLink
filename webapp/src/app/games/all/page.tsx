@@ -1,21 +1,11 @@
 "use client"
 
 import React from 'react';
-import Post from '@/components/Post';
 import FullSideBar from '@/components/FullSideBar';
-import HomeShortCutPanel from '@/components/HomeShortCutPanel';
-import { Trophy, Users, ChevronRight, Gamepad2, Swords, Zap } from 'lucide-react';
 
 export default function Home() {
-
-  const trendingGames = [
-    { name: 'VALORANT', category: 'TAKTISCHER SHOOTER', players: '120k online' },
-    { name: 'LEAGUE OF LEGENDS', category: 'MOBA', players: '320k online' }
-  ];
-
-
-const upcomingTournaments = [
-
+  
+  const upcomingTournaments = [
     {
       title: 'Apex Legends Cup',
       game: 'APEX LEGENDS',
@@ -39,6 +29,11 @@ const upcomingTournaments = [
     }
   ];
 
+  const trendingGames = [
+    { name: 'VALORANT', category: 'TAKTISCHER SHOOTER', players: '120k online' },
+    { name: 'LEAGUE OF LEGENDS', category: 'MOBA', players: '320k online' }
+  ];
+
   var selectedPage = {
     0: '/user/profile',
     1: '/home',
@@ -48,22 +43,12 @@ const upcomingTournaments = [
   }
 
   return (
-    <div className="flex max-h-screen">
+    <div className="flex">
       {/* Left Sidebar - Fixed */}
-      <FullSideBar which_Page={selectedPage[1]}/>
+      <FullSideBar which_Page={selectedPage[4]}/>
 
       {/* Main Content Area */}
-      <div className="flex flex-1"> {/* Adjust ml-16 based on your Sidebar width */}
-        {/* Middle Content - Scrollable */}
-        <main className="flex-1 mr-20 ml-20 overflow-y-scroll no-scrollbar">
-          <Post/>
-          <Post/>
-          <Post/>
-          <Post/>
-        </main>
-        
-        <HomeShortCutPanel/>
-      </div>
+      
     </div>
   );
 }
