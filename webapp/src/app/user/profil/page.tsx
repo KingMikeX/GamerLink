@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useEffect } from "react";
+
+const API_BASE_URL = "http://localhost:8000"; // Passe ggf. deine URL an
 
 // Typdefinition für den Profile-Zustand
 interface ProfileState {
@@ -52,6 +55,109 @@ export default function ProfilePage() {
       friendRequests: false,
     },
   });
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Kein Token gefunden.");
+        return;
+      }
+  
+      // Mapping vom Frontend-zu-Backend-Feldnamen
+      const payload = {
+        bio: profile.about,
+        region: profile.location,
+        birthdate: profile.birthdate || null,
+        favorite_games: profile.games,
+        platform: profile.platform,
+        play_style: profile.playstyle,
+        languages: profile.languages,
+        discord: profile.discord,
+        steam: profile.steam,
+        twitch: profile.twitch,
+        youtube: profile.youtube,
+        is_public: profile.privacy.public,
+        is_online: profile.privacy.online,
+        allow_notifications: profile.privacy.emailNotifications,
+        allow_friend_requests: profile.privacy.friendRequests,
+        profile_picture: profile.image || undefined, // optional
+      };
+  
+      const response = await fetch(`${API_BASE_URL}/profile/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Fehler beim Speichern:", errorData);
+        alert("Fehler beim Speichern: " + (errorData.detail || "Unbekannter Fehler"));
+        return;
+      }
+  
+      const result = await response.json();
+      console.log("Profil gespeichert:", result);
+      alert("Profil erfolgreich gespeichert!");
+    } catch (err) {
+      console.error("Fehler beim Speichern:", err);
+      alert("Es ist ein Fehler beim Speichern aufgetreten.");
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+  
+        const res = await fetch(`${API_BASE_URL}/profile/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (!res.ok) {
+          throw new Error("Profil konnte nicht geladen werden");
+        }
+  
+        const data = await res.json();
+  
+        setProfile((prev) => ({
+          ...prev,
+          username: data.username || prev.username, // falls du es im Backend ergänzt hast
+          email: data.email || "", // optional, falls nicht im Profil enthalten
+          about: data.bio || "",
+          location: data.region || "",
+          birthdate: data.birthdate || "",
+          games: data.favorite_games || [],
+          platform: data.platform || "",
+          playstyle: data.play_style || "",
+          languages: data.languages || [],
+          discord: data.discord || "",
+          steam: data.steam || "",
+          twitch: data.twitch || "",
+          youtube: data.youtube || "",
+          image: data.profile_picture || "",
+          privacy: {
+            public: data.is_public ?? false,
+            online: data.is_online ?? false,
+            emailNotifications: data.allow_notifications ?? false,
+            friendRequests: data.allow_friend_requests ?? false,
+          },
+        }));
+      } catch (error) {
+        console.error("Fehler beim Laden des Profils:", error);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
 
   const handleScrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -274,7 +380,8 @@ export default function ProfilePage() {
         </section>
         <section className="border-t border-[#2E314A] pt-6 mt-10 flex justify-end gap-4">
         <button className="px-6 py-2 rounded-md bg-[#1F213A] text-white hover:bg-[#2E314A]">ABBRECHEN</button>
-        <button className="px-6 py-2 rounded-md bg-[#dd17c9] text-white hover:bg-pink-600">ÄNDERUNGEN SPEICHERN</button>
+        <button onClick={handleSave} className="px-6 py-2 rounded-md bg-[#dd17c9] text-white hover:bg-pink-600">ÄNDERUNGEN SPEICHERN</button>
+
 </section>
       </main>
     </div>

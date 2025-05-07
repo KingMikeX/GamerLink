@@ -27,7 +27,12 @@ def get_own_profile(current_user: User = Depends(get_current_user), db: Session 
         )
 
     return {
-        "user_id": str(profile.user_id),
+        # ✅ Felder aus User-Tabelle
+        "user_id": str(current_user.id),
+        "username": current_user.username,
+        "email": current_user.email,
+
+        # ✅ Felder aus UserProfile-Tabelle
         "region": profile.region,
         "main_game": profile.main_game,
         "rank": profile.rank,
@@ -48,6 +53,7 @@ def get_own_profile(current_user: User = Depends(get_current_user), db: Session 
         "allow_notifications": profile.allow_notifications,
         "allow_friend_requests": profile.allow_friend_requests
     }
+
 
 @profile_router.put("/update")
 def update_own_profile(
