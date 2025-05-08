@@ -96,8 +96,8 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
         <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Turnierregeln</h3>
         <div className="bg-[#131320] px-6 py-4 rounded-lg text-sm">
         <textarea
-          class="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32"
-          placeholder="Gib hier deine Regeln ein ..."></textarea>
+          className="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32"
+          placeholder="Gib hier deine Regeln ein ..."/>
         </div>
       </div>
       
@@ -234,9 +234,9 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
         <div>
           <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Zusätzliche Anforderungen</h3>
           <div className="space-y-2 bg-[#131320] px-4 py-4 rounded-lg text-sm">
-            <div className="text-gray-300">- Discord für Kommunikation erforderlich</div>
-            <div className="text-gray-300">- PC mit mindestens 8GB RAM und stabiler Internetverbindung</div>
-            <div className="text-gray-300">- Headset mit Mikrofon</div>
+            <textarea
+            className="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32"
+            placeholder="Anforderungen wie bspw. Discord zur Turnierorganisation und Kommunikation etc."/>
           </div>
         </div>
       </div>
