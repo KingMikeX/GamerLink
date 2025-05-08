@@ -1,8 +1,10 @@
 "use client";
+import FullSideBar from "@/components/FullSideBar";
 import { useState } from "react";
 import { useEffect } from "react";
 
 const API_BASE_URL = "http://localhost:8000"; // Passe ggf. deine URL an
+
 
 // Typdefinition für den Profile-Zustand
 interface ProfileState {
@@ -55,6 +57,14 @@ export default function ProfilePage() {
       friendRequests: false,
     },
   });
+
+  var selectedPage = {
+    0: '/user/profile',
+    1: '/home',
+    2: '/tournements/list',
+    3: '/user/friends',
+    4: '/games/all',
+  }
 
   const handleSave = async () => {
     try {
@@ -205,47 +215,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex font-sans text-white bg-[#252641]">
-      <aside className="w-[260px] min-h-screen bg-[#1A1B2E] px-4 py-6 flex flex-col items-center text-sm sticky top-0">
-        <div className="flex flex-col items-center mb-6">
-        <label htmlFor="profileImage" className="relative w-[150px] h-[150px] bg-[#20223A] rounded-full flex items-center justify-center text-sm mb-2 cursor-pointer overflow-hidden">
-  {profile.image ? (
-    <img src={profile.image} alt="Profilbild" className="w-full h-full object-cover rounded-full" />
-  ) : (
-    <span className="text-white text-sm">150 x 150</span>
-  )}
-  <div className="absolute bottom-0 right-0 w-9 h-9 bg-pink-400 rounded-full flex items-center justify-center shadow-lg">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13h3l10-10m-6 6l-4 4m0 0H9v-3m0 3v3h3" />
-    </svg>
-  </div>
-  <input
-    id="profileImage"
-    type="file"
-    accept="image/*"
-    onChange={(e) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProfile((prev) => ({ ...prev, image: reader.result as string }));
-        };
-        reader.readAsDataURL(file);
-      }
-    }}
-    className="hidden"
-  />
-</label>
-          <span className="text-md font-semibold">{profile.username || "BENUTZERNAME"}</span>
-          <span className="text-xs text-gray-400">BEARBEITE DEIN PROFIL</span>
-        </div>
-        <nav className="flex flex-col space-y-2 w-full">
-          <button onClick={() => handleScrollTo("section-personal")} className="text-left w-full py-2 px-4 rounded-md bg-[#252641] hover:bg-[#1F213A]">PERSÖNLICHE INFOS</button>
-          <button onClick={() => handleScrollTo("section-gaming")} className="text-left w-full py-2 px-4 rounded-md bg-[#252641] hover:bg-[#1F213A]">GAMING-PRÄFERENZEN</button>
-          <button onClick={() => handleScrollTo("section-social")} className="text-left w-full py-2 px-4 rounded-md bg-[#252641] hover:bg-[#1F213A]">VERBINDUNGEN</button>
-          <button onClick={() => handleScrollTo("section-privacy")} className="text-left w-full py-2 px-4 rounded-md bg-[#252641] hover:bg-[#1F213A]">DATENSCHUTZ</button>
-        </nav>
-        <div className="mt-auto pt-10 text-xs text-gray-400">Einstellungen</div>
-      </aside>
+      <FullSideBar which_Page={selectedPage[1]}/>
 
       <main className="flex-1 overflow-y-auto px-8 py-10 space-y-16">
         <section id="section-personal">

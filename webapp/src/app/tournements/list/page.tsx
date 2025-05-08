@@ -111,7 +111,7 @@ export default function TournamentList() {
           </h1>
 
           <a
-            href="/tournaments/create"
+            href="/tournements/create"
             className="bg-[#dd17c9] hover:bg-pink-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
           >
             Turnier erstellen
@@ -145,7 +145,7 @@ export default function TournamentList() {
                   {joining ? "Wird beigetreten..." : "JETZT ANMELDEN"}
                 </button>
                 <a
-                  href={`/tournaments/${selectedTournament.id}/details`}
+                  href={`/tournements/${selectedTournament.id}/details`}
                   className="px-5 py-2 bg-[#2c2c4e] hover:bg-[#3b3b63] rounded-full text-white font-bold text-sm"
                 >
                   DETAILS ANSEHEN

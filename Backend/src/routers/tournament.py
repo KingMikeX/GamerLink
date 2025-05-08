@@ -131,7 +131,6 @@ def create_tournament(
     db.commit()
     db.refresh(tournament)
 
-    # 🔄 Teams anlegen (nur einmaliges Commit!)
     team_objs = []
     for i in range(1, tournament.teamanzahl + 1):
         team = TournamentTeam(
@@ -143,23 +142,12 @@ def create_tournament(
 
     db.commit()
 
-    # ⏺️ Ergebnisse anlegen
-    for team in team_objs:
-        result_entry = TournamentResult(
-            tournament_id=tournament.id,
-            team_id=team.id
-        )
-        db.add(result_entry)
-
-    db.commit()
-
-    # 🔁 Spielplan mit Spieltagen (round-robin)
     team_pairs = list(combinations(team_objs, 2))
+    matches_per_day = len(team_objs) // 2 or 1
     matchday = 1
-    matches_per_day = len(team_objs) // 2 or 1  # mindestens 1 Match pro Tag
 
     for i, (team_a, team_b) in enumerate(team_pairs):
-        if i % matches_per_day == 0:
+        if i != 0 and i % matches_per_day == 0:
             matchday += 1
         match = TournamentMatch(
             tournament_id=tournament.id,
