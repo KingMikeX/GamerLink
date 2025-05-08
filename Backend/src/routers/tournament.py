@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Optional
 from sqlalchemy.orm import Session
 from uuid import UUID
 from datetime import datetime, timezone
@@ -91,11 +92,16 @@ class MyTournamentOut(BaseModel):
     created_by_username: str
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Pydantic v2
 
 
 class JoinTournamentRequest(BaseModel):
     team_id: UUID
+
+class TournamentDetailOut(MyTournamentOut):
+    teamanzahl: int
+    teamgroeße: int
+    participants_count: int
 
 
 from models.tournament_results import TournamentResult
@@ -236,40 +242,53 @@ def get_tournaments_created_by_me(
 @tournament_router.post("/{tournament_id}/join")
 def join_tournament(
     tournament_id: UUID,
-    join_data: JoinTournamentRequest,
+    join_data: Optional[JoinTournamentRequest] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # ⛔ Turnierprüfung
     tournament = db.query(Tournament).filter(Tournament.id == tournament_id).first()
     if not tournament:
         raise HTTPException(status_code=404, detail="Turnier nicht gefunden")
 
-    # ⛔ Zeitprüfung
+    # 🔁 Wenn kein Team übergeben wurde, automatisch eins finden
+    if join_data is None or join_data.team_id is None:
+        teams = db.query(TournamentTeam).filter_by(tournament_id=tournament.id).all()
+        assigned_team = None
+        for team in teams:
+            member_count = db.query(TournamentParticipant).filter_by(team_id=team.id).count()
+            if member_count < tournament.teamgroeße:
+                assigned_team = team
+                break
+
+        if not assigned_team:
+            raise HTTPException(status_code=400, detail="Kein verfügbares Team gefunden.")
+
+        join_data = JoinTournamentRequest(team_id=assigned_team.id)
+
+    # 🕓 Zeitprüfung
     if tournament.start_time <= datetime.now(timezone.utc):
         raise HTTPException(status_code=403, detail="Das Turnier hat bereits begonnen.")
 
-    # ⛔ Schon Teilnehmer?
+    # 🔒 Bereits beigetreten?
     already_joined = db.query(TournamentParticipant).filter_by(
         tournament_id=tournament_id,
         user_id=current_user.id
     ).first()
     if already_joined:
         raise HTTPException(status_code=400, detail="Du bist bereits Teilnehmer.")
-    
-    # ⛔ Turnier voll?
+
+    # 📈 Turnier voll?
     total_participants = db.query(TournamentParticipant).filter_by(
         tournament_id=tournament_id
     ).count()
     if total_participants >= tournament.max_players:
         raise HTTPException(status_code=403, detail="Das Turnier ist bereits voll.")
 
-    # ⛔ Team prüfen
+    # ✅ Team prüfen
     team = db.query(TournamentTeam).filter_by(id=join_data.team_id, tournament_id=tournament_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team nicht gefunden.")
 
-    # ⛔ Team voll?
     member_count = db.query(TournamentParticipant).filter_by(team_id=team.id).count()
     if member_count >= tournament.teamgroeße:
         raise HTTPException(status_code=403, detail="Das gewählte Team ist bereits voll.")
@@ -284,7 +303,6 @@ def join_tournament(
     db.commit()
 
     return {"message": f"Du bist dem Team '{team.name}' erfolgreich beigetreten."}
-
 
 @tournament_router.get("/", response_model=List[MyTournamentOut])
 def get_all_tournaments(
@@ -315,7 +333,7 @@ def get_all_tournaments(
 
     return result
 
-@tournament_router.get("/{tournament_id}", response_model=MyTournamentOut)
+@tournament_router.get("/{tournament_id}", response_model=TournamentDetailOut)
 def get_tournament_by_id(
     tournament_id: UUID,
     current_user: User = Depends(get_current_user),
@@ -326,8 +344,9 @@ def get_tournament_by_id(
         raise HTTPException(status_code=404, detail="Turnier nicht gefunden")
 
     creator = db.query(User).filter(User.id == tournament.created_by).first()
+    participants_count = db.query(TournamentParticipant).filter_by(tournament_id=tournament_id).count()
 
-    return MyTournamentOut(
+    return TournamentDetailOut(
         id=tournament.id,
         name=tournament.name,
         game=tournament.game,
@@ -337,7 +356,10 @@ def get_tournament_by_id(
         max_players=tournament.max_players,
         description=tournament.description,
         created_at=tournament.created_at,
-        created_by_username=creator.username if creator else "Unbekannt"
+        created_by_username=creator.username if creator else "Unbekannt",
+        teamanzahl=tournament.teamanzahl,
+        teamgroeße=tournament.teamgroeße,
+        participants_count=participants_count
     )
 
 @tournament_router.get("/{tournament_id}/participants", response_model=List[ParticipantOut])
