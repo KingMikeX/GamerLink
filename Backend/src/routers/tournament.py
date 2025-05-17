@@ -10,6 +10,7 @@ from models.tournament_participant import TournamentParticipant
 from models.tournament_team import TournamentTeam
 from models.tournament_results import TournamentResult
 from models.tournament_matches import TournamentMatch
+from models.tournament_prize import TournamentPrize
 from models.user import User
 from utils.auth_dependencies import get_current_user, get_db
 from pydantic import BaseModel, constr, field_validator
@@ -21,16 +22,44 @@ tournament_router = APIRouter(
     tags=["Tournaments"]
 )
 
+class PrizeSchema(BaseModel):
+    place: int
+    name: str
+    description: Optional[str] = None
+
 # 📥 Request Body für Turniererstellung
 class TournamentCreate(BaseModel):
+    # Basisdaten
     name: Annotated[str, constr(min_length=3, max_length=100)]
     game: str
     niveau: str
+    description: Optional[str] = ""
+
+    # Zeitplan
     start_time: datetime
     duration_minutes: int
-    description: str
+    break_duration: Optional[int] = 0
+    timezone: Optional[str] = "CET"
+
+    # Registrierung
+    registration_start: datetime
+    registration_end: datetime
+    check_in_required: bool = False
+
+    # Format & Teams
     teamanzahl: int
-    teamgroeße: int 
+    teamgroeße: int
+    mode: Optional[str] = "singleElimination"  # z. B. singleElimination, roundRobin, groupPhase
+    scoring_system: Optional[str] = "STANDARD"
+    rules: Optional[str] = ""
+
+    # Teilnahme
+    entry_fee: Optional[float] = 0.0
+    is_public: bool = True
+    invite_only: bool = False
+
+    # Preise
+    prizes: Optional[List[PrizeSchema]] = []
 
 
     @field_validator("start_time")
@@ -104,6 +133,8 @@ class TournamentDetailOut(MyTournamentOut):
     participants_count: int
 
 
+###################Ab hier Router##################################################################################
+
 from models.tournament_results import TournamentResult
 
 @tournament_router.post("/create")
@@ -125,12 +156,37 @@ def create_tournament(
         description=tournament_data.description,
         teamanzahl=tournament_data.teamanzahl,
         teamgroeße=tournament_data.teamgroeße,
-        created_by=current_user.id
+        created_by=current_user.id,
+
+        # ✅ Neue Felder
+        entry_fee=tournament_data.entry_fee,
+        timezone=tournament_data.timezone,
+        rules=tournament_data.rules,
+        scoring_system=tournament_data.scoring_system,
+        mode=tournament_data.mode,
+        check_in_required=tournament_data.check_in_required,
+        registration_start=tournament_data.registration_start,
+        registration_end=tournament_data.registration_end,
+        is_public=tournament_data.is_public,
+        invite_only=tournament_data.invite_only,
     )
     db.add(tournament)
     db.commit()
     db.refresh(tournament)
 
+    # 🎁 Preise hinzufügen
+    for prize in tournament_data.prizes:
+        db_prize = TournamentPrize(
+            tournament_id=tournament.id,
+            place=prize.place,
+            name=prize.name,
+            description=prize.description
+        )
+        db.add(db_prize)
+    db.commit()
+
+
+    # Teams erstellen
     team_objs = []
     for i in range(1, tournament.teamanzahl + 1):
         team = TournamentTeam(
@@ -142,27 +198,85 @@ def create_tournament(
 
     db.commit()
 
-    team_pairs = list(combinations(team_objs, 2))
-    matches_per_day = len(team_objs) // 2 or 1
+    # 🧠 Dynamische Matchgenerierung basierend auf dem Modus
+    mode = tournament_data.mode
+    teams = team_objs
     matchday = 1
 
-    for i, (team_a, team_b) in enumerate(team_pairs):
-        if i != 0 and i % matches_per_day == 0:
+    if mode == "singleElimination":
+        from math import log2, ceil
+        total_rounds = ceil(log2(len(teams)))
+        current_round_teams = teams
+
+        for round_num in range(1, total_rounds + 1):
+            num_matches = len(current_round_teams) // 2
+            for i in range(num_matches):
+                if round_num == 1:
+                    # Erste Runde – bekannte Teams
+                    team_a = current_round_teams[i * 2]
+                    team_b = current_round_teams[i * 2 + 1]
+                    db.add(TournamentMatch(
+                        tournament_id=tournament.id,
+                        team_a_id=team_a.id,
+                        team_b_id=team_b.id,
+                        matchday=round_num
+                    ))
+                else:
+                    # Spätere Runden – unbekannte Teams
+                    db.add(TournamentMatch(
+                        tournament_id=tournament.id,
+                        team_a_id=None,
+                        team_b_id=None,
+                        matchday=round_num
+                    ))
+            current_round_teams = [None] * num_matches  # Platzhalter
+
+
+    elif mode == "roundRobin":
+        # Jeder gegen jeden
+        from itertools import combinations
+        pairs = list(combinations(teams, 2))
+        matches_per_day = len(teams) // 2 or 1
+        for i, (team_a, team_b) in enumerate(pairs):
+            if i != 0 and i % matches_per_day == 0:
+                matchday += 1
+            db.add(TournamentMatch(
+                tournament_id=tournament.id,
+                team_a_id=team_a.id,
+                team_b_id=team_b.id,
+                matchday=matchday
+            ))
+
+    elif mode == "groupPhase":
+        group_size = 4
+        groups = [teams[i:i + group_size] for i in range(0, len(teams), group_size)]
+
+        for group in groups:
+            group_pairs = list(combinations(group, 2))
+            for team_a, team_b in group_pairs:
+                db.add(TournamentMatch(
+                    tournament_id=tournament.id,
+                    team_a_id=team_a.id,
+                    team_b_id=team_b.id,
+                    matchday=matchday
+                ))
             matchday += 1
-        match = TournamentMatch(
-            tournament_id=tournament.id,
-            team_a_id=team_a.id,
-            team_b_id=team_b.id,
-            matchday=matchday
-        )
-        db.add(match)
+
+
 
     db.commit()
 
     return {
+
         "message": "Turnier inkl. Teams und Spielplan erfolgreich erstellt.",
-        "tournament_id": str(tournament.id)
+        "tournament_id": str(tournament.id),
+        "matches": db.query(TournamentMatch).filter_by(tournament_id=tournament.id).count(),
+        "teams": len(team_objs),
+        "prizes": len(tournament_data.prizes),
+        "mode": tournament.mode
+
     }
+
 
 
 

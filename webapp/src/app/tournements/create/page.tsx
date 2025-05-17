@@ -15,32 +15,38 @@ export default function CreateTournament() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Basic Info (Step 1)
-    title: '',
-    game: '',
-    teamSize: '',
-    maxTeams: 2,
-    scoringSystem: 'STANDARD',
-    registrationStart: '15.04.2025, 08:00',
-    registrationEnd: '30.04.2025, 23:59',
-    entryFee: '0',
-    isPublic: true,
-    inviteOnly: false,
-    checkInRequired: true,
-    
-    // Schedule (Step 2)
-    startDate: '20.04.2025',
-    startTime: '18:00',
-    timezone: 'MITTELEUROPÄISCHE ZEIT (CET/CEST)',
-    autoRounds: true,
-    matchDuration: '30',
-    breakDuration: '15',
-    
-    // Prizes (Step 3)
-    prizes: [
-      { id: 1, place: 1, name: '', description: '' },
-    ]
-  });
+  // Basic Info (Step 1)
+  title: '',
+  game: '',
+  teamSize: '',
+  maxTeams: 2,
+  scoringSystem: 'STANDARD',
+  registrationStart: '15.04.2025',
+  registrationEnd: '30.04.2025',
+  entryFee: '0',
+  isPublic: true,
+  inviteOnly: false,
+  checkInRequired: true,
+
+  // Format
+  rules: '',                
+  mode: 'singleElimination', 
+
+  // Schedule (Step 2)
+  startDate: '20.04.2025',
+  startTime: '18:00',
+  timezone: 'CET',           
+  autoRounds: true,
+  matchDuration: '30',
+  breakDuration: '15',
+  tournamentMode: 'singleElimination',
+
+  // Prizes (Step 3)
+  prizes: [
+    { place: 1, name: '', description: '' }
+  ]
+});
+
   
   const updateFormData = (newData: any) => {
     setFormData(newData);
@@ -68,8 +74,9 @@ export default function CreateTournament() {
       return;
     }
 
-    // Datum & Zeit kombinieren
     const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
+    const registrationStart = new Date(formData.registrationStart);
+    const registrationEnd = new Date(formData.registrationEnd);
     const teamSizeNumber = parseInt(formData.teamSize.split("v")[0]);
 
     const payload = {
@@ -80,8 +87,26 @@ export default function CreateTournament() {
       duration_minutes: parseInt(formData.matchDuration),
       description: "Automatisch generiertes Turnier",
       teamanzahl: formData.maxTeams,
-      teamgroeße: teamSizeNumber
+      teamgroeße: teamSizeNumber,
+      registration_start: registrationStart.toISOString(),
+      registration_end: registrationEnd.toISOString(),
+      check_in_required: formData.checkInRequired,
+      entry_fee: parseFloat(formData.entryFee),
+      is_public: formData.isPublic,
+      invite_only: formData.inviteOnly,
+      rules: formData.rules || "",
+      mode: formData.tournamentMode || "singleElimination",
+      scoring_system: formData.scoringSystem || "STANDARD",
+      timezone: formData.timezone || "CET",
+      break_duration: parseInt(formData.breakDuration) || 0,
+      prizes: (formData.prizes || []).map(p => ({
+        place: p.place,
+        name: p.name,
+        description: p.description
+      }))
     };
+
+    console.log("📤 Final Payload:", payload);
 
     const res = await fetch("http://localhost:8000/tournaments/create", {
       method: "POST",
@@ -100,12 +125,13 @@ export default function CreateTournament() {
 
     const result = await res.json();
     alert("Turnier erfolgreich erstellt!");
-    router.push("/tournaments");
+    router.push("/tournements/list");
   } catch (err) {
     console.error("Fehler beim Senden:", err);
     alert("Beim Erstellen des Turniers ist ein Fehler aufgetreten.");
   }
 };
+
 
 
   

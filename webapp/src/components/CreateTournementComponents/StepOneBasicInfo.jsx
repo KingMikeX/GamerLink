@@ -13,12 +13,12 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
   const [gameSearchQuery, setGameSearchQuery] = useState('');
 
 useEffect(() => {
-  const now = getNowAsDatetimeLocal();
   if (!formData.registrationStart || !formData.registrationEnd) {
+    const today = new Date().toISOString().split('T')[0]; // Nur das Datum
     updateFormData({
       ...formData,
-      registrationStart: now,
-      registrationEnd: now,
+      registrationStart: today,
+      registrationEnd: today,
     });
   }
 }, []);
@@ -202,7 +202,7 @@ useEffect(() => {
             <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Anmeldung Start</h3>
             <div className="flex items-center">
               <input
-                type="datetime-local"
+                type="date"
                 className="flex-1 bg-[#131320] p-3 rounded-lg text-white w-full"
                 value={formData.registrationStart || ''}
                 onChange={(e) => updateFormData({
@@ -218,7 +218,7 @@ useEffect(() => {
             <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Anmeldung Ende</h3>
             <div className="flex items-center">
               <input
-                type="datetime-local"
+                type="date"
                 className="flex-1 bg-[#131320] p-3 rounded-lg text-white w-full"
                 value={formData.registrationEnd || ''}
                 onChange={(e) => updateFormData({
