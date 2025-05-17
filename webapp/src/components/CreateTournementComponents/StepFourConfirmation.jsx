@@ -2,208 +2,102 @@
 import React from 'react';
 
 const Step4Confirmation = ({ formData, onBack, onSubmit }) => {
+
+  const Info = ({ label, value }) => (
+  <div className="flex flex-col">
+    <label className="text-gray-400 text-sm">{label}</label>
+    <div className="bg-[#131320] mt-1 px-3 py-2 rounded text-white">{value}</div>
+  </div>
+);
+
+const Tag = ({ label }) => (
+  <div className="bg-[#131320] text-white mt-1 px-3 py-2 rounded uppercase">{label}</div>
+);
+
+
   return (
-    <div className="bg-[#121428] mx-auto p-6 rounded-lg max-w-3xl">
+        <div className="bg-[#121428] mx-auto p-6 rounded-lg max-w-3xl">
       <h2 className="mb-6 font-semibold text-xl uppercase">Turnierbestätigung</h2>
-      
-      {/* Tournament Quick Info */}
+
+      {/* Quick Info */}
       <div className="flex justify-around items-center bg-[#131320] mb-6 px-4 py-3 rounded-lg">
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400">CS:GO</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400">5v5</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400">Single Elimination</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400">20.04.2025</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400">18:00</span>
-        </div>
+        <span className="text-gray-400">{formData.game}</span>
+        <span className="text-gray-400">{formData.teamSize}</span>
+        <span className="text-gray-400">{formData.tournamentMode?.replace(/([A-Z])/g, ' $1').toUpperCase()}</span>
+        <span className="text-gray-400">{formData.startDate}</span>
+        <span className="text-gray-400">{formData.startTime}</span>
       </div>
-      
-      {/* Tournament Card Preview */}
-      <div className="mb-8">
-        <div className="bg-gray-200 mb-2 rounded-lg overflow-hidden">
-          {/* Tournament Banner Image Placeholder */}
-          <div className="flex justify-center items-center bg-gray-300 h-48">
-            <div className="bg-white p-2 rounded text-gray-500">
-              <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          
-          {/* Tournament Title & Info */}
-          <div className="bg-purple-600 px-4 py-3 text-white">
-            <h3 className="font-bold text-xl">CSGO Summer Cup 2025</h3>
-            <p className="text-sm">Veranstaltet von GamerLink Team | 16 Teams</p>
-          </div>
-        </div>
-        
-        {/* Tournament Description */}
-        <div className="bg-[#131320] p-4 rounded-lg">
-          <p>Der ultimative CSGO-Wettbewerb für ambitionierte Teams. Zeigt euer Können und kämpft um attraktive Preise!</p>
-        </div>
+
+      {/* Tournament Info */}
+      <div className="bg-purple-600 px-4 py-3 text-white mb-4 rounded-lg">
+        <h3 className="font-bold text-xl">{formData.title}</h3>
+        <p className="text-sm">Max Teams: {formData.maxTeams}</p>
       </div>
-      
-      {/* Tournament Details */}
+
+      {/* Grundinfos */}
       <div className="mb-8">
         <h3 className="mb-4 font-medium text-lg uppercase">Grundinformationen</h3>
-        
         <div className="gap-4 grid grid-cols-2">
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Turniername</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">CSGO SUMMER CUP 2025</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Spiel</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">COUNTER-STRIKE: GLOBAL OFFENSIVE</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Format</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">5v5, SINGLE ELIMINATION</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Maximale Teams</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">16</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Punktesystem</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">STANDARD (GEWINNER: 3/UNENTSCHIEDEN:1/VERLIERER:0)</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Turnierregeln</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">........</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Anmeldestart</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">15.04.2025, 08:00</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Anmeldeende</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">30.04.2025, 23:59</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Teilnahmegebühr</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">$ 0</div>
-          </div>
-          
-          <div className="col-span-2">
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded uppercase">ÖFFENTLICHES TURNIER</div>
-          </div>
-          
-          <div className="col-span-2">
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded uppercase">KEINE EINLADUNG</div>
-          </div>
-          
-          <div className="col-span-2">
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded uppercase">CHECK-IN ERFORDERLICH</div>
-          </div>
-          
-          <div className="col-span-2">
-            <label className="text-gray-400 text-sm">Zusätzliche Informationen</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">........</div>
-          </div>
+          <Info label="Spiel" value={formData.game} />
+          <Info label="Teamgröße" value={formData.teamSize} />
+          <Info label="Format" value={formData.tournamentMode?.replace(/([A-Z])/g, ' $1')} />
+          <Info label="Maximale Teams" value={formData.maxTeams} />
+          <Info label="Punktesystem" value={formData.scoringSystem} />
+          <Info label="Regeln" value={formData.rules || 'Keine angegeben'} />
+          <Info label="Anmeldestart" value={formData.registrationStart} />
+          <Info label="Anmeldeende" value={formData.registrationEnd} />
+          <Info label="Teilnahmegebühr" value={`$ ${formData.entryFee}`} />
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {formData.isPublic && <Tag label="Öffentliches Turnier" />}
+          {formData.inviteOnly && <Tag label="Nur auf Einladung" />}
+          {formData.checkInRequired && <Tag label="Check-In erforderlich" />}
         </div>
       </div>
-      
-      {/* Schedule Details */}
+
+      {/* Zeitplanung */}
       <div className="mb-8">
         <h3 className="mb-4 font-medium text-lg uppercase">Zeitplanung</h3>
-        
         <div className="gap-4 grid grid-cols-2">
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Startdatum</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">20.04.2025</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Startzeit</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">18:00</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Zeitzone</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">MITTELEUROPÄISCHE ZEIT (CET/CEST)</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Matchdauer</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">30 MINUTEN</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Pause</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">15 MINUTEN</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Rundenzeitplan</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">.......</div>
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-400 text-sm">Turnierbracket</label>
-            <div className="bg-[#131320] mt-1 px-3 py-2 rounded">.......</div>
-          </div>
+          <Info label="Startdatum" value={formData.startDate} />
+          <Info label="Startzeit" value={formData.startTime} />
+          <Info label="Zeitzone" value={formData.timezone} />
+          <Info label="Matchdauer" value={`${formData.matchDuration} Minuten`} />
+          <Info label="Pause" value={`${formData.breakDuration} Minuten`} />
         </div>
       </div>
-      
-      {/* Prize Details */}
+
+      {/* Preise */}
       <div className="mb-8">
         <h3 className="mb-4 font-medium text-lg uppercase">Preise</h3>
-        
-        <div className="space-y-2">
-          <div className="flex items-center">
-            <span className="mr-3 font-bold text-purple-500">1. PREIS:</span>
-            <span>Gaming Headset XYZ Pro</span>
-          </div>
-          
-          <div className="flex items-center">
-            <span className="mr-3 font-bold text-purple-500">2. PREIS:</span>
-            <span>Gaming Maus Ultra</span>
-          </div>
-          
-          <div className="flex items-center">
-            <span className="mr-3 font-bold text-purple-500">3. PREIS:</span>
-            <span>T-Shirt + Mousepad</span>
-          </div>
-        </div>
+        {formData.prizes && formData.prizes.length > 0 ? (
+          formData.prizes.map((prize) => (
+            <div key={prize.id} className="flex items-center text-white mb-2">
+              <span className="mr-3 font-bold text-purple-500">{prize.place}. PREIS:</span>
+              <span>{prize.name}</span>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400">Keine Preise definiert</p>
+        )}
       </div>
-      
-      {/* Agreement & Submit */}
+
+      {/* Hinweis + Navigation */}
       <div className="mb-6 text-gray-400 text-sm">
-        <p>Mit dem Erstellen des Turniers stimmst du den Nutzungsbedingungen von GamerLink zu. Bitte stelle sicher, dass alle Angaben korrekt sind, da nachträgliche Änderungen nur eingeschränkt möglich sind.</p>
+        <p>Mit dem Erstellen des Turniers stimmst du den Nutzungsbedingungen von GamerLink zu.</p>
       </div>
-      
-      {/* Navigation */}
+
       <div className="flex justify-between">
-        <button
-          onClick={onBack}
-          className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg font-medium text-white"
-        >
+        <button onClick={onBack} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg font-medium text-white">
           ZURÜCK
         </button>
-        <button
-          onClick={onSubmit}
-          className="bg-purple-600 hover:bg-purple-700 px-10 py-2 rounded-lg font-medium text-white"
-        >
+        <button onClick={onSubmit} className="bg-purple-600 hover:bg-purple-700 px-10 py-2 rounded-lg font-medium text-white">
           TURNIER ERSTELLEN
         </button>
       </div>
     </div>
+
   );
 };
 

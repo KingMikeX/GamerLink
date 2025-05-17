@@ -2,9 +2,9 @@
 import FullSideBar from "@/components/FullSideBar";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const API_BASE_URL = "http://localhost:8000"; // Passe ggf. deine URL an
-
 
 // Typdefinition für den Profile-Zustand
 interface ProfileState {
@@ -33,6 +33,7 @@ interface ProfileState {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<ProfileState>({
     image: "",
     username: "",
@@ -349,7 +350,13 @@ export default function ProfilePage() {
           </div>
         </section>
         <section className="border-t border-[#2E314A] pt-6 mt-10 flex justify-end gap-4">
-        <button className="px-6 py-2 rounded-md bg-[#1F213A] text-white hover:bg-[#2E314A]">ABBRECHEN</button>
+        <button
+        type="button"
+        onClick={() => router.push("/home")}
+        className="w-full sm:w-auto px-6 py-2 rounded-md bg-[#1F213A] hover:bg-[#2E314A] text-white font-semibold transition-colors"
+      >
+        ABBRECHEN
+      </button>
         <button onClick={handleSave} className="px-6 py-2 rounded-md bg-[#dd17c9] text-white hover:bg-pink-600">ÄNDERUNGEN SPEICHERN</button>
 
 </section>

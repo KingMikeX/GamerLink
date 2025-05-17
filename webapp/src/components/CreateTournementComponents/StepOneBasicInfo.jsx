@@ -1,8 +1,27 @@
 // 3. /components/TournamentCreation/Step1BasicInfo.jsx - Schritt 1: Grundinfo
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+// Hilfsfunktion
+const getNowAsDatetimeLocal = () => {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // damit lokale Zeit korrekt ist
+  return now.toISOString().slice(0, 16); // Format für datetime-local
+};
+
 
 const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
   const [gameSearchQuery, setGameSearchQuery] = useState('');
+
+useEffect(() => {
+  const now = getNowAsDatetimeLocal();
+  if (!formData.registrationStart || !formData.registrationEnd) {
+    updateFormData({
+      ...formData,
+      registrationStart: now,
+      registrationEnd: now,
+    });
+  }
+}, []);
   
   const teamSizeOptions = [
     { id: '1v1', label: '1v1' , size: 1},
@@ -29,146 +48,208 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
   return (
     <div className="bg-[#121428] mx-auto p-6 rounded-lg max-w-3xl">
       <h2 className="mb-6 font-semibold text-xl uppercase">Turnierformat</h2>
+
+      {/* Tournament Title */}
+      <div className="mb-6">
+        <label className="block text-xs text-gray-400 mb-1">Turniername</label>
+        <input
+          type="text"
+          placeholder="Tuniertitel eingeben"
+          className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+          value={formData.title || ''}
+          onChange={(e) =>
+            updateFormData({ ...formData, title: e.target.value })
+          }
+        />
+      </div>
+
       
       {/* Game Selection */}
       <div className="mb-6">
         <div className="flex items-center mb-2">
-          <button className="flex items-center space-x-2 bg-[#131320] hover:bg-[#1A1A2E] px-4 py-2 rounded-lg text-sm">
-            <span>CS:GO</span>
-            <span className="ml-2">⊙</span>
-          </button>
+      <input
+        type="text"
+        placeholder="Spiel eingeben"
+        className="bg-[#131320] px-4 py-2 rounded-lg text-sm text-white w-full mb-2"
+        value={formData.game || ""}
+        onChange={(e) =>
+          updateFormData({
+            ...formData,
+            game: e.target.value,
+          })
+        }
+      />
         </div>
-        
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="NACH SPIEL SUCHEN..."
-            className="bg-[#44224A] px-4 py-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-full text-sm"
-            value={gameSearchQuery}
-            onChange={(e) => setGameSearchQuery(e.target.value)}
-          />
-          <span className="top-1/2 left-3 absolute text-gray-400 -translate-y-1/2 transform">🔍</span>
-        </div>
+
       </div>
       
       {/* Team Size */}
-      <div className="mb-6">
-        <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Teamgröße</h3>
-        <div className="flex space-x-2">
-          {teamSizeOptions.map(option => (
-            <button
-              key={option.id}
-              className={`px-4 py-2 rounded-lg text-sm ${
-                formData.teamSize === option.id
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-[#131320] text-gray-300 hover:bg-[#1A1A2E]'
-              }`}
-              onClick={() => handleTeamSizeChange(option.id)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 gap-4 mt-4">
+    <div>
+      <label className="block text-xs text-gray-400 mb-1">Spieler pro Team</label>
+      <input
+        type="number"
+        min={1}
+        className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+        value={formData.playersPerTeam || ''}
+        onChange={(e) => {
+          const size = parseInt(e.target.value) || 0;
+          updateFormData({ 
+            ...formData, 
+            playersPerTeam: size,
+            teamSize: `${size}v${size}` // z. B. "5v5"
+          });
+        }}
+
+      />
+    </div>
+    <div>
+      <label className="block text-xs text-gray-400 mb-1">Anzahl Teams</label>
+    <input
+      type="number"
+      min={2}
+      className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+      value={formData.maxTeams || ''}
+      onChange={(e) =>
+        updateFormData({ ...formData, maxTeams: parseInt(e.target.value) || 0 })
+      }
+    />
+    </div>
+  </div>
+
+      <div className="mb-4">
+        <h3 className="text-white text-lg font-semibold">Punktesystem</h3>
+        <p className="text-sm text-gray-300 mt-1">
+          Lege fest, wie viele Punkte ein Team für Sieg, Unentschieden oder Niederlage erhält.
+        </p>
       </div>
-      
-      {/* Max Teams */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-medium text-gray-400 text-sm uppercase">Maximale Anzahl Teams/Spieler</h3>
-          <div className="flex items-center bg-[#131320] rounded-lg">
-            <span className="px-3 py-1">16 TEAMS</span>
-            <button className="px-2 py-1 text-gray-400">▼</button>
-          </div>
-        </div>
-        <div className="text-gray-400 text-xs">Die maximale Anzahl an Teams, die teilnehmen können.</div>
-      </div>
+
       
       {/* Point System */}
-      <div className="mb-6">
-        <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Punktesystem</h3>
-        <div className="bg-[#131320] px-4 py-3 rounded-lg text-sm">
-          STANDARD (GEWINNER: 3/UNENTSCHIEDEN:1/VERLIERER:0)
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Sieg</label>
+          <input
+            type="number"
+            min={0}
+            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+            value={formData.scoringWin ?? ''}
+            onChange={(e) =>
+              updateFormData({
+                ...formData,
+                scoringWin: e.target.value === '' ? '' : parseInt(e.target.value),
+              })
+            }
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Unentschieden</label>
+          <input
+            type="number"
+            min={0}
+            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+            value={formData.scoringDraw ?? ''}
+            onChange={(e) =>
+              updateFormData({
+                ...formData,
+                scoringDraw: e.target.value === '' ? '' : parseInt(e.target.value),
+              })
+            }
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Niederlage</label>
+          <input
+            type="number"
+            min={0}
+            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
+            value={formData.scoringLose ?? ''}
+            onChange={(e) =>
+              updateFormData({
+                ...formData,
+                scoringLose: e.target.value === '' ? '' : parseInt(e.target.value),
+              })
+            }
+          />
         </div>
       </div>
+
+
       
       {/* Tournament Rules */}
       <div className="mb-6">
-        <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Turnierregeln</h3>
+        <h3 className="text-white text-lg font-semibold mb-2">Turnierregeln</h3>
         <div className="bg-[#131320] px-6 py-4 rounded-lg text-sm">
-        <textarea
-          className="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32"
-          placeholder="Gib hier deine Regeln ein ..."/>
+          <textarea
+            className="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32 bg-[#131320] text-white"
+            placeholder="Gib hier deine Regeln ein ..."
+            value={formData.rules || ""}
+            onChange={(e) =>
+              updateFormData({ ...formData, rules: e.target.value })
+            }
+          />
         </div>
       </div>
+
       
       {/* Participation Requirements */}
       <div className="mb-6">
-        <h2 className="mb-4 font-semibold text-xl uppercase">Teilnahmebedingungen</h2>
+        <h2 className="mb-4 font-semibold text-xl uppercase text-white">Teilnahmebedingungen</h2>
         
         <div className="gap-6 grid grid-cols-2 mb-6">
           {/* Registration Start */}
           <div>
             <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Anmeldung Start</h3>
             <div className="flex items-center">
-              <div className="flex-1 bg-[#131320] mr-2 p-3 rounded-lg">
-                <input
-                  type="text"
-                  className="bg-transparent outline-none w-full"
-                  placeholder="15.04.2025, 08:00"
-                  value={formData.registrationStart || ''}
-                  onChange={(e) => updateFormData({ 
-                    ...formData, 
-                    registrationStart: e.target.value 
-                  })}
-                />
-              </div>
-              <button className="bg-[#131320] p-3 rounded-lg text-gray-400">
-                📅
-              </button>
+              <input
+                type="datetime-local"
+                className="flex-1 bg-[#131320] p-3 rounded-lg text-white w-full"
+                value={formData.registrationStart || ''}
+                onChange={(e) => updateFormData({
+                  ...formData,
+                  registrationStart: e.target.value,
+                })}
+              />
             </div>
           </div>
-          
+
           {/* Registration End */}
           <div>
             <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Anmeldung Ende</h3>
             <div className="flex items-center">
-              <div className="flex-1 bg-[#131320] mr-2 p-3 rounded-lg">
-                <input
-                  type="text"
-                  className="bg-transparent outline-none w-full"
-                  placeholder="30.04.2025, 23:59"
-                  value={formData.registrationEnd || ''}
-                  onChange={(e) => updateFormData({ 
-                    ...formData, 
-                    registrationEnd: e.target.value 
-                  })}
-                />
-              </div>
-              <button className="bg-[#131320] p-3 rounded-lg text-gray-400">
-                📅
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Entry Fee */}
-        <div className="mb-6">
-          <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Teilnahmegebühr</h3>
-          <div className="flex items-center">
-            <div className="flex-1 bg-[#131320] p-3 rounded-lg">
               <input
-                type="text"
-                className="bg-transparent outline-none w-full"
-                placeholder="0"
-                value={formData.entryFee || ''}
-                onChange={(e) => updateFormData({ 
-                  ...formData, 
-                  entryFee: e.target.value 
+                type="datetime-local"
+                className="flex-1 bg-[#131320] p-3 rounded-lg text-white w-full"
+                value={formData.registrationEnd || ''}
+                onChange={(e) => updateFormData({
+                  ...formData,
+                  registrationEnd: e.target.value,
                 })}
               />
             </div>
           </div>
         </div>
+
+        {/* Entry Fee */}
+        <div className="mb-6">
+          <h3 className="mb-2 font-medium text-gray-400 text-xs uppercase">Teilnahmegebühr</h3>
+          <div className="flex items-center">
+            <input
+              type="number"
+              min={0}
+              className="bg-[#131320] p-3 rounded-lg text-white w-full"
+              value={formData.entryFee ?? ''}
+              onChange={(e) =>
+                updateFormData({
+                  ...formData,
+                  entryFee: e.target.value === '' ? '' : parseFloat(e.target.value),
+                })
+              }
+            />
+          </div>
+        </div>
+      </div>
+
         
         {/* Participation Options */}
         <div className="space-y-4 mb-6">
@@ -229,18 +310,8 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
             </label>
           </div>
         </div>
-        
-        {/* Additional Requirements */}
-        <div>
-          <h3 className="mb-2 font-medium text-gray-400 text-sm uppercase">Zusätzliche Anforderungen</h3>
-          <div className="space-y-2 bg-[#131320] px-4 py-4 rounded-lg text-sm">
-            <textarea
-            className="p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 w-full h-32"
-            placeholder="Anforderungen wie bspw. Discord zur Turnierorganisation und Kommunikation etc."/>
-          </div>
-        </div>
-      </div>
-      
+    
+  
       {/* Transparency Notice */}
       <div className="bg-[#22172C] mb-6 p-4 border-purple-500 border-l-4 text-sm">
         <h3 className="font-medium text-purple-400">TIPP: TRANSPARENZ UND FORMAT</h3>
@@ -259,8 +330,9 @@ const Step1BasicInfo = ({ formData, updateFormData, onNext }) => {
           WEITER
         </button>
       </div>
-    </div>
+      </div>
   );
 };
+
 
 export default Step1BasicInfo;

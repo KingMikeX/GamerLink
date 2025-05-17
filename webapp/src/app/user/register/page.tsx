@@ -68,24 +68,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Social Buttons (optional Platzhalter) */}
-        <button className="flex items-center justify-center w-full py-2 mb-4 border border-white/30 rounded-md shadow-sm hover:shadow-md">
-          <span className="text-sm font-medium">Sign up with Google</span>
-        </button>
-
-        <button className="flex items-center justify-center w-full py-2 mb-4 border border-white/30 rounded-md shadow-sm hover:shadow-md">
-          <span className="text-sm font-medium">Sign up with GitHub</span>
-        </button>
-
-        {/* Divider */}
-        <div className="flex items-center my-4">
-          <hr className="flex-grow border-pink-400" />
-          <span className="mx-4 text-xs text-white uppercase font-medium">
-            or sign up with e-mail
-          </span>
-          <hr className="flex-grow border-pink-400" />
-        </div>
-
         {/* Form */}
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <input
@@ -117,7 +99,7 @@ export default function Register() {
 
           <div className="text-sm text-center text-gray-300">
             Du hast schon ein Konto?{" "}
-            <Link href="/login" className="text-[#da4ecc] hover:underline font-medium">
+            <Link href="/user/login" className="text-[#da4ecc] hover:underline font-medium">
               Login
             </Link>
           </div>

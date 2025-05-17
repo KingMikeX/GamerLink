@@ -16,10 +16,10 @@ export default function CreateTournament() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Basic Info (Step 1)
-    title: 'CSGO SUMMER CUP 2025',
-    game: 'CS:GO',
-    teamSize: '5v5',
-    maxTeams: 16,
+    title: '',
+    game: '',
+    teamSize: '',
+    maxTeams: 2,
     scoringSystem: 'STANDARD',
     registrationStart: '15.04.2025, 08:00',
     registrationEnd: '30.04.2025, 23:59',
@@ -38,9 +38,7 @@ export default function CreateTournament() {
     
     // Prizes (Step 3)
     prizes: [
-      { id: 1, place: 1, name: 'Gaming Headset XYZ Pro', description: 'Professionelles Gaming-Headset mit 7.1 Surround Sound und RGB-Beleuchtung.' },
-      { id: 2, place: 2, name: 'Gaming Maus Ultra', description: 'Ergonomische Gaming-Maus mit 18.000 DPI und programmierbaren Tasten.' },
-      { id: 3, place: 3, name: 'T-Shirt + Mousepad', description: 'Limitiertes Gamertec T-Shirt und Premium Mousepad im Bundle.' },
+      { id: 1, place: 1, name: '', description: '' },
     ]
   });
   
@@ -62,11 +60,54 @@ export default function CreateTournament() {
     }
   };
   
-  const handleSubmit = () => {
-    // Hier würde die API-Anfrage zur Erstellung des Turniers erfolgen
-    alert('Turnier erfolgreich erstellt!');
-    router.push('/tournaments');
-  };
+ const handleSubmit = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Nicht eingeloggt.");
+      return;
+    }
+
+    // Datum & Zeit kombinieren
+    const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
+    const teamSizeNumber = parseInt(formData.teamSize.split("v")[0]);
+
+    const payload = {
+      name: formData.title,
+      game: formData.game,
+      niveau: formData.scoringSystem,
+      start_time: startDateTime.toISOString(),
+      duration_minutes: parseInt(formData.matchDuration),
+      description: "Automatisch generiertes Turnier",
+      teamanzahl: formData.maxTeams,
+      teamgroeße: teamSizeNumber
+    };
+
+    const res = await fetch("http://localhost:8000/tournaments/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      alert("Fehler: " + (errorData.detail || "Unbekannter Fehler"));
+      return;
+    }
+
+    const result = await res.json();
+    alert("Turnier erfolgreich erstellt!");
+    router.push("/tournaments");
+  } catch (err) {
+    console.error("Fehler beim Senden:", err);
+    alert("Beim Erstellen des Turniers ist ein Fehler aufgetreten.");
+  }
+};
+
+
   
   return (
     <Layout>

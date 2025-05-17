@@ -80,21 +80,6 @@ export default function Login() {
           <p className="uppercase tracking-widest text-sm font-black text-white mb-6">Login</p>
         </div>
 
-        {/* Drittanbieter Buttons (optional) */}
-        <button className="flex items-center justify-center w-full py-2 mb-4 border border-white/30 rounded-md shadow-sm hover:shadow-md">
-          <span className="text-sm font-medium">Sign in with Google</span>
-        </button>
-        <button className="flex items-center justify-center w-full py-2 mb-4 border border-white/30 rounded-md shadow-sm hover:shadow-md">
-          <span className="text-sm font-medium">Sign in with GitHub</span>
-        </button>
-
-        {/* Divider */}
-        <div className="flex items-center my-4">
-          <hr className="flex-grow border-pink-400" />
-          <span className="mx-4 text-xs text-white uppercase font-medium">or sign in with e-mail</span>
-          <hr className="flex-grow border-pink-400" />
-        </div>
-
         {/* Login-Formular */}
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <input
