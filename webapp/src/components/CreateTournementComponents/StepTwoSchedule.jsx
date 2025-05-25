@@ -236,125 +236,94 @@ useEffect(() => {
       </div>
 
       {/* Tournament Bracket Preview */}
-      <div className="mb-8">
-        <h3 className="mb-4 font-medium text-sm uppercase">Turnier-Bracket Vorschau</h3>
-        
-        <div className="bg-[#131320] p-4 rounded-lg">
-          <div className="flex">
-            {/* Round 1 */}
-            <div className="flex-1">
-              <div className="mb-3 font-medium text-gray-400 text-sm text-center">RUNDE 1</div>
-              
-              <div className="space-y-6">
-                {/* Match 1 */}
-                <div className="relative">
-                  <div className="bg-[#1E1E2D] mb-1 border border-gray-700 rounded">
-                    <div className="p-2 border-gray-700 border-b">TEAM 1</div>
-                  </div>
-                  <div className="bg-[#1E1E2D] border border-gray-700 rounded">
-                    <div className="p-2">TEAM 2</div>
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-t border-r w-full h-1/2"></div>
-                  </div>
-                </div>
-                
-                {/* Match 2 */}
-                <div className="relative">
-                  <div className="bg-[#1E1E2D] mb-1 border border-gray-700 rounded">
-                    <div className="p-2 border-gray-700 border-b">TEAM 3</div>
-                  </div>
-                  <div className="bg-[#1E1E2D] border border-gray-700 rounded">
-                    <div className="p-2">TEAM 4</div>
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-r border-b w-full h-1/2"></div>
-                  </div>
-                </div>
-                
-                {/* Match 3 */}
-                <div className="relative">
-                  <div className="bg-[#1E1E2D] mb-1 border border-gray-700 rounded">
-                    <div className="p-2 border-gray-700 border-b">TEAM 5</div>
-                  </div>
-                  <div className="bg-[#1E1E2D] border border-gray-700 rounded">
-                    <div className="p-2">TEAM 6</div>
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-t border-r w-full h-1/2"></div>
-                  </div>
-                </div>
-                
-                {/* Match 4 */}
-                <div className="relative">
-                  <div className="bg-[#1E1E2D] mb-1 border border-gray-700 rounded">
-                    <div className="p-2 border-gray-700 border-b">TEAM 7</div>
-                  </div>
-                  <div className="bg-[#1E1E2D] border border-gray-700 rounded">
-                    <div className="p-2">TEAM 8</div>
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-r border-b w-full h-1/2"></div>
-                  </div>
-                </div>
-              </div>
+<div className="mb-8">
+  <h3 className="mb-4 font-medium text-sm uppercase">Turnier-Bracket Vorschau</h3>
+
+  <div className="bg-[#131320] p-4 rounded-lg">
+    {formData.tournamentMode === 'singleElimination' && (
+      <div className="flex overflow-x-auto space-x-4 pb-4">
+        {rounds.map((round, roundIndex) => (
+          <div key={roundIndex} className="min-w-[250px] flex-shrink-0">
+            <div className="mb-3 font-medium text-gray-400 text-sm text-center uppercase">
+              {round.name}
             </div>
-            
-            {/* Round 2 */}
-            <div className="flex-1">
-              <div className="mb-3 font-medium text-gray-400 text-sm text-center">RUNDE 2</div>
-              
-              <div className="space-y-12 pt-12">
-                {/* Match 1 */}
-                <div className="relative">
-                  <div className="bg-purple-600 mb-2 p-2 rounded">
-                    SIEGER 1/2
+            <div className={`space-y-6 ${roundIndex > 0 ? 'pt-6' : ''}`}>
+              {Array.from({ length: round.matches }).map((_, matchIndex) => {
+                let teamA = '';
+                let teamB = '';
+                if (roundIndex === 0) {
+                  teamA = `Team ${matchIndex * 2 + 1}`;
+                  teamB = `Team ${matchIndex * 2 + 2}`;
+                } else {
+                  teamA = `Sieger ${matchIndex * 2 + 1}/${matchIndex * 2 + 2}`;
+                  teamB = `Sieger ${matchIndex * 2 + 3}/${matchIndex * 2 + 4}`;
+                }
+                return (
+                  <div key={matchIndex} className="relative">
+                    <div className="bg-[#1E1E2D] mb-1 border border-gray-700 rounded">
+                      <div className="p-2 border-gray-700 border-b">{teamA}</div>
+                    </div>
+                    <div className="bg-[#1E1E2D] border border-gray-700 rounded">
+                      <div className="p-2">{teamB}</div>
+                    </div>
+                    <div className="right-0 absolute flex justify-end items-center w-4 h-full">
+                      <div className="border-gray-600 border-t border-r w-full h-1/2"></div>
+                    </div>
                   </div>
-                  <div className="bg-purple-600 mb-2 p-2 rounded">
-                    SIEGER 3/4
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-t border-r w-full h-1/2"></div>
-                  </div>
-                </div>
-                
-                {/* Match 2 */}
-                <div className="relative mt-16">
-                  <div className="bg-purple-600 mb-2 p-2 rounded">
-                    SIEGER 5/6
-                  </div>
-                  <div className="bg-purple-600 mb-2 p-2 rounded">
-                    SIEGER 7/8
-                  </div>
-                  {/* Connector */}
-                  <div className="right-0 absolute flex justify-end items-center w-4 h-full">
-                    <div className="border-gray-600 border-r border-b w-full h-1/2"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Final */}
-            <div className="flex-1">
-              <div className="mb-3 font-medium text-gray-400 text-sm text-center">FINALE</div>
-              
-              <div className="space-y-4 pt-20">
-                <div className="bg-purple-700 mb-2 p-2 rounded">
-                  FINALIST 1
-                </div>
-                <div className="bg-purple-700 p-2 rounded">
-                  FINALIST 2
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
-        </div>
+        ))}
       </div>
+    )}
+
+    {formData.tournamentMode === 'roundRobin' && (
+      <div className="space-y-6">
+        {rounds.map((round, roundIndex) => (
+          <div key={roundIndex} className="bg-[#1E1E2D] rounded-lg overflow-hidden">
+            <div className="bg-purple-600 px-4 py-2 font-medium">
+              {round.name} – {formData.startDate}, {round.time}
+            </div>
+            <div className="px-4 py-3 space-y-2">
+              {Array.from({ length: round.matches }).map((_, matchIndex) => (
+                <div key={matchIndex} className="flex justify-between">
+                  <span>Team {matchIndex * 2 + 1}</span>
+                  <span>vs.</span>
+                  <span>Team {matchIndex * 2 + 2}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {formData.tournamentMode === 'groupPhase' && (
+      <div className="space-y-6">
+        {rounds.map((round, roundIndex) => (
+          <div key={roundIndex} className="bg-[#1E1E2D] rounded-lg overflow-hidden">
+            <div className="bg-purple-600 px-4 py-2 font-medium">
+              {round.name} – {formData.startDate}, {round.time}
+            </div>
+            <div className="px-4 py-3 space-y-2">
+              {Array.from({ length: round.matches }).map((_, matchIndex) => (
+                <div key={matchIndex} className="flex justify-between">
+                  <span>Match {matchIndex + 1}</span>
+                  <span className="text-sm text-gray-400">Best-of: {round.format}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+
+
+
 
       {/* Navigation */}
       <div className="flex justify-between">

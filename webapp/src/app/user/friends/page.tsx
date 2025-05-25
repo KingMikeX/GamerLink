@@ -1,25 +1,172 @@
-"use client"
-
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import FullSideBar from '@/components/FullSideBar';
+import SendFriendRequest from '@/components/SendFriendRequest';
 
-export default function Home() {
+interface FriendRequest {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  status: string;
+  created_at: string;
+  sender_name?: string;
+  receiver_name?: string;
+}
 
-  var selectedPage = {
-    0: '/user/Profile',
+export default function FriendsPage() {
+  const [incoming, setIncoming] = useState<FriendRequest[]>([]);
+  const [sent, setSent] = useState<FriendRequest[]>([]);
+  const [accepted, setAccepted] = useState<FriendRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const selectedPage = {
+    0: '/user/profile',
     1: '/home',
     2: '/tournements/list',
     3: '/user/friends',
     4: '/games/all',
-  }
+  };
+
+  useEffect(() => {
+    const fetchFriendData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:8000/profile/friends/requests", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let data: FriendRequest[] = await res.json();
+
+        const enhanced = await Promise.all(
+          data.map(async (req) => {
+            const senderRes = await fetch(`http://localhost:8000/profile/by-id/${req.sender_id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const receiverRes = await fetch(`http://localhost:8000/profile/by-id/${req.receiver_id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const sender = senderRes.ok ? await senderRes.json() : {};
+            const receiver = receiverRes.ok ? await receiverRes.json() : {};
+
+            return {
+              ...req,
+              sender_name: sender.username || req.sender_id,
+              receiver_name: receiver.username || req.receiver_id,
+            };
+          })
+        );
+
+        const currentUserId = localStorage.getItem("user_id");
+
+        setIncoming(enhanced.filter(r => r.status === "pending" && r.receiver_id === currentUserId));
+        setSent(enhanced.filter(r => r.status === "pending" && r.sender_id === currentUserId));
+        setAccepted(enhanced.filter(r => r.status === "accepted"));
+      } catch (error) {
+        console.error("Fehler beim Laden der Freundesdaten:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFriendData();
+  }, []);
+
+  const handleAccept = async (requestId: string) => {
+    const token = localStorage.getItem("token");
+    await fetch(`http://localhost:8000/profile/friends/accept/${requestId}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    location.reload();
+  };
+
+  const handleDecline = async (requestId: string) => {
+    const token = localStorage.getItem("token");
+    await fetch(`http://localhost:8000/profile/friends/decline/${requestId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    location.reload();
+  };
 
   return (
     <div className="flex">
-      {/* Left Sidebar - Fixed */}
-      <FullSideBar which_Page={selectedPage[3]}/>
+      <FullSideBar which_Page={selectedPage[3]} />
 
-      {/* Main Content Area */}
-      
+      <div className="flex-1 p-10 text-white">
+        <h1 className="text-3xl font-bold mb-6">Freunde</h1>
+
+        {loading ? (
+          <p>Lade Freundesdaten...</p>
+        ) : (
+          <>
+            <div className="mb-8">
+              <SendFriendRequest />
+            </div>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-3">Eingehende Anfragen</h2>
+              {incoming.length === 0 ? <p>Keine Anfragen.</p> : (
+                <ul className="space-y-3">
+                  {incoming.map(req => (
+                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
+                      <span>{req.sender_name}</span>
+                      <div className="space-x-2">
+                        <button onClick={() => handleAccept(req.id)} className="bg-green-600 px-3 py-1 rounded">Annehmen</button>
+                        <button onClick={() => handleDecline(req.id)} className="bg-red-600 px-3 py-1 rounded">Ablehnen</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-3">Gesendete Anfragen</h2>
+              {sent.length === 0 ? <p>Keine gesendeten Anfragen.</p> : (
+                <ul className="space-y-3">
+                  {sent.map(req => (
+                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl">
+                      <span>an {req.receiver_name} gesendet</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold mb-3">Akzeptierte Freunde</h2>
+              {accepted.length === 0 ? <p>Keine Freunde.</p> : (
+                <ul className="space-y-3">
+                  {accepted.map(req => {
+                    const myId = localStorage.getItem("user_id");
+                    const friendName = req.sender_id === myId ? req.receiver_name : req.sender_name;
+                    return (
+                      <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
+                      <span>{friendName}</span>
+                      <button
+                        onClick={async () => {
+                          const token = localStorage.getItem("token");
+                          await fetch(`http://localhost:8000/profile/friends/remove/${req.id}`, {
+                            method: "DELETE",
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                          location.reload(); // aktualisieren
+                        }}
+                        className="bg-red-600 px-3 py-1 rounded"
+                      >
+                        Entfernen
+                      </button>
+                    </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+          </>
+        )}
+      </div>
     </div>
   );
 }

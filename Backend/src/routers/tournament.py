@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from uuid import UUID
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from itertools import combinations
 
 from models.tournament_data import Tournament
@@ -16,6 +16,7 @@ from utils.auth_dependencies import get_current_user, get_db
 from pydantic import BaseModel, constr, field_validator
 from typing import Annotated, List
 from typing import Optional
+from sqlalchemy import func
 
 tournament_router = APIRouter(
     prefix="/tournaments",
@@ -119,6 +120,7 @@ class MyTournamentOut(BaseModel):
     description: str
     created_at: datetime
     created_by_username: str
+    participants_count: Optional[int] = 0
 
     class Config:
         from_attributes = True  # Pydantic v2
@@ -420,6 +422,8 @@ def get_all_tournaments(
     result = []
     for t in tournaments:
         creator = db.query(User).filter(User.id == t.created_by).first()
+        participants_count = db.query(TournamentParticipant).filter(TournamentParticipant.tournament_id == t.id).count()
+        
         result.append(MyTournamentOut(
             id=t.id,
             name=t.name,
@@ -430,7 +434,8 @@ def get_all_tournaments(
             max_players=t.max_players,
             description=t.description,
             created_at=t.created_at,
-            created_by_username=creator.username if creator else "Unbekannt"
+            created_by_username=creator.username if creator else "Unbekannt",
+            participants_count=participants_count
         ))
 
     return result
@@ -683,3 +688,17 @@ def get_tournament_matches(
         ))
 
     return result
+
+@tournament_router.get("/stats/popular_games")
+def get_popular_games(db: Session = Depends(get_db)):
+    three_months_ago = datetime.utcnow() - timedelta(days=90)
+    result = (
+        db.query(Tournament.game, func.count(Tournament.id).label("count"))
+        .filter(Tournament.created_at >= three_months_ago)
+        .group_by(Tournament.game)
+        .order_by(func.count(Tournament.id).desc())
+        .limit(3)
+        .all()
+    )
+
+    return [{"name": r[0], "count": r[1]} for r in result]

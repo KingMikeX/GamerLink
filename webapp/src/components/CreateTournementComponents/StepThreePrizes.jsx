@@ -48,7 +48,13 @@ useEffect(() => {
           <div 
             key={type}
             className={`cursor-pointer pb-3 flex-1 text-center ${prizeType === type ? 'text-purple-500 border-b-2 border-purple-500' : 'text-gray-400'}`}
-            onClick={() => setPrizeType(type)}
+            onClick={() => {
+              if (type !== prizeType) {
+                // Wenn sich der Typ ändert, Preise leeren
+                updateFormData({ ...formData, prizeType: type, prizes: [] });
+                setPrizeType(type);
+              }
+            }}
           >
             <div className="font-medium uppercase">
               {type === 'physical' ? 'Sachpreise' : type === 'money' ? 'Geldpreise' : 'Keine Preise'}

@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi import UploadFile, File
 from sqlalchemy.orm import Session
@@ -10,11 +11,31 @@ from register_login.user_register_login import PublicUserProfile
 from uuid import uuid4
 from pathlib import Path
 from datetime import timezone, datetime
+from models.friendship import Friendship
+from pydantic import BaseModel
+from uuid import UUID
+from datetime import datetime
+from register_login.user_register_login import PublicUserProfile  # für Ausgabe
+
 
 profile_router = APIRouter(
     prefix="/profile",
     tags=["Profile"]
 )
+
+
+class FriendshipCreate(BaseModel):
+    receiver_id: UUID
+
+class FriendshipOut(BaseModel):
+    id: UUID
+    sender_id: UUID
+    receiver_id: UUID
+    status: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
 
 @profile_router.get("/me")
 def get_own_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -127,6 +148,7 @@ def get_profile_by_username(username: str, db: Session = Depends(get_db)):
         )
 
     return PublicUserProfile(
+        user_id=str(user.id),
         username=user.username,
         region=profile.region,
         main_game=profile.main_game,
@@ -201,3 +223,152 @@ def logout_user(
     db.commit()
 
     return {"message": "Du wurdest erfolgreich ausgeloggt."}
+
+
+
+@profile_router.post("/friends/request", response_model=FriendshipOut)
+def send_friend_request(
+    request_data: FriendshipCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if request_data.receiver_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Du kannst dir selbst keine Anfrage senden.")
+
+    # Duplikate verhindern
+    existing = db.query(Friendship).filter(
+        ((Friendship.sender_id == current_user.id) & (Friendship.receiver_id == request_data.receiver_id)) |
+        ((Friendship.sender_id == request_data.receiver_id) & (Friendship.receiver_id == current_user.id))
+    ).first()
+
+    if existing:
+        raise HTTPException(status_code=400, detail="Freundschaftsanfrage existiert bereits.")
+
+    new_request = Friendship(
+        sender_id=current_user.id,
+        receiver_id=request_data.receiver_id
+    )
+    db.add(new_request)
+    db.commit()
+    db.refresh(new_request)
+
+    return new_request
+
+
+@profile_router.get("/friends/requests", response_model=List[FriendshipOut])
+def get_friend_requests(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    requests = db.query(Friendship).filter(Friendship.receiver_id == current_user.id).all()
+    return requests
+
+
+@profile_router.post("/friends/accept/{request_id}")
+def accept_friend_request(
+    request_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    request = db.query(Friendship).filter(
+        Friendship.id == request_id,
+        Friendship.receiver_id == current_user.id
+    ).first()
+
+    if not request:
+        raise HTTPException(status_code=404, detail="Anfrage nicht gefunden.")
+
+    request.status = "accepted"
+    db.commit()
+    return {"message": "Freundschaftsanfrage akzeptiert."}
+
+
+@profile_router.delete("/friends/decline/{request_id}")
+def decline_friend_request(
+    request_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    request = db.query(Friendship).filter(
+        Friendship.id == request_id,
+        Friendship.receiver_id == current_user.id
+    ).first()
+
+    if not request:
+        raise HTTPException(status_code=404, detail="Anfrage nicht gefunden.")
+
+    db.delete(request)
+    db.commit()
+    return {"message": "Anfrage abgelehnt oder gelöscht."}
+
+@profile_router.get("/friends/list", response_model=List[PublicUserProfile])
+def get_friends(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    friendships = db.query(Friendship).filter(
+        ((Friendship.sender_id == current_user.id) | (Friendship.receiver_id == current_user.id)) &
+        (Friendship.status == "accepted")
+    ).all()
+
+    friend_ids = [
+        f.receiver_id if f.sender_id == current_user.id else f.sender_id
+        for f in friendships
+    ]
+
+    friends = db.query(User).filter(User.id.in_(friend_ids)).all()
+    profiles = db.query(UserProfile).filter(UserProfile.user_id.in_(friend_ids)).all()
+
+    profile_map = {p.user_id: p for p in profiles}
+
+    result = []
+    for friend in friends:
+        profile = profile_map.get(friend.id)
+        if profile and profile.is_public:  # Nur öffentliche Profile anzeigen
+            result.append(PublicUserProfile(
+                username=friend.username,
+                region=profile.region,
+                main_game=profile.main_game,
+                rank=profile.rank,
+                play_style=profile.play_style,
+                platform=profile.platform,
+                favorite_games=profile.favorite_games,
+                bio=profile.bio,
+                profile_picture=profile.profile_picture,
+                birthdate=profile.birthdate,
+                languages=profile.languages,
+                discord=profile.discord,
+                steam=profile.steam,
+                twitch=profile.twitch,
+                youtube=profile.youtube,
+                is_online=profile.is_online
+            ))
+
+    return result
+
+def remove_friend(
+    request_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    friendship = db.query(Friendship).filter(
+        Friendship.id == request_id,
+        Friendship.status == "accepted",
+        ((Friendship.sender_id == current_user.id) | (Friendship.receiver_id == current_user.id))
+    ).first()
+
+    if not friendship:
+        raise HTTPException(status_code=404, detail="Freundschaft nicht gefunden oder keine Berechtigung.")
+
+    db.delete(friendship)
+    db.commit()
+    return {"message": "Freund entfernt."}
+
+@profile_router.get("/by-id/{user_id}")
+def get_profile_by_id(user_id: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden.")
+
+    return {"username": user.username}

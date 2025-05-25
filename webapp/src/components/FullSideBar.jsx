@@ -51,7 +51,6 @@ if(which_Page == 0)re
         <SidebarItem icon={<Zap size={20} />} text="Feed" active onClick={goToFeed} selected={is_page_selected(selectedPage[which_Page], 1)}/>
         <SidebarItem icon={<Swords size={20} />} text="Tournaments" active onClick={goToTournaments} selected={is_page_selected(selectedPage[which_Page], 2)}/>
         <SidebarItem icon={<Users size={20} />} text="Friends" active onClick={goToFriends} selected={is_page_selected(selectedPage[which_Page], 3)}/>
-        <SidebarItem icon={<Gamepad2 size={20} />} text="Games" active onClick={goToGames} selected={is_page_selected(selectedPage[which_Page], 4)}/>
         </Sidebar> 
     </div>
     </aside>

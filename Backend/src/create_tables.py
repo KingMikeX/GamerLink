@@ -7,6 +7,7 @@ from models.tournament_team import TournamentTeam
 from models.tournament_matches import TournamentMatch
 from models.tournament_results import TournamentResult
 from models.tournament_prize import TournamentPrize
+from models.friendship import  Friendship
 
 # Nur für Entwicklungsumgebungen: Löscht alle Tabellen und erstellt sie neu
 #print("⚠️ Lösche bestehende Tabellen...")

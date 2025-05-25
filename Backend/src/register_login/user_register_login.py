@@ -3,6 +3,7 @@ from typing import Optional, List
 from typing import Optional, List
 from pydantic import BaseModel
 from datetime import date
+from uuid import UUID
 
 UserName: type = constr(min_length=3, max_length=50)
 PasswordStr: type = constr(min_length=6)
@@ -40,6 +41,8 @@ class UserProfileUpdate(BaseModel):
     allow_friend_requests: Optional[bool] = None
 
 class PublicUserProfile(BaseModel):
+    user_id: str
+    username: str
     region: Optional[str] = None
     main_game: Optional[str] = None
     rank: Optional[str] = None
