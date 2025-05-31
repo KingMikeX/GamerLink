@@ -31,37 +31,58 @@ export default function FriendsPage() {
     const fetchFriendData = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        const res = await fetch("http://localhost:8000/profile/friends/requests", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        let data: FriendRequest[] = await res.json();
-
-        const enhanced = await Promise.all(
-          data.map(async (req) => {
-            const senderRes = await fetch(`http://localhost:8000/profile/by-id/${req.sender_id}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            const receiverRes = await fetch(`http://localhost:8000/profile/by-id/${req.receiver_id}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-
-            const sender = senderRes.ok ? await senderRes.json() : {};
-            const receiver = receiverRes.ok ? await receiverRes.json() : {};
-
-            return {
-              ...req,
-              sender_name: sender.username || req.sender_id,
-              receiver_name: receiver.username || req.receiver_id,
-            };
-          })
-        );
-
         const currentUserId = localStorage.getItem("user_id");
 
-        setIncoming(enhanced.filter(r => r.status === "pending" && r.receiver_id === currentUserId));
-        setSent(enhanced.filter(r => r.status === "pending" && r.sender_id === currentUserId));
-        setAccepted(enhanced.filter(r => r.status === "accepted"));
+        const [incomingRes, sentRes, acceptedRes] = await Promise.all([
+          fetch("http://localhost:8000/profile/friends/requests/incoming", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:8000/profile/friends/requests/sent", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:8000/profile/friends/list", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const incomingData: FriendRequest[] = await incomingRes.json();
+        const sentData: FriendRequest[] = await sentRes.json();
+        const acceptedData = await acceptedRes.json(); // PublicUserProfile[]
+
+        const enrich = async (req: FriendRequest) => {
+          const senderRes = await fetch(`http://localhost:8000/profile/by-id/${req.sender_id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const receiverRes = await fetch(`http://localhost:8000/profile/by-id/${req.receiver_id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const sender = senderRes.ok ? await senderRes.json() : {};
+          const receiver = receiverRes.ok ? await receiverRes.json() : {};
+
+          return {
+            ...req,
+            sender_name: sender.username || req.sender_id,
+            receiver_name: receiver.username || req.receiver_id,
+          };
+        };
+
+        const incoming = await Promise.all(incomingData.map(enrich));
+        const sent = await Promise.all(sentData.map(enrich));
+
+      const acceptedFormatted: FriendRequest[] = acceptedData.map((user: any) => ({
+        id: user.friendship_id,
+        sender_id: currentUserId || '',
+        receiver_id: user.user_id,
+        status: "accepted",
+        created_at: "",
+        sender_name: "Du",
+        receiver_name: user.username,
+      }));
+
+        setIncoming(incoming);
+        setSent(sent);
+        setAccepted(acceptedFormatted);
       } catch (error) {
         console.error("Fehler beim Laden der Freundesdaten:", error);
       } finally {
@@ -139,12 +160,9 @@ export default function FriendsPage() {
               <h2 className="text-xl font-semibold mb-3">Akzeptierte Freunde</h2>
               {accepted.length === 0 ? <p>Keine Freunde.</p> : (
                 <ul className="space-y-3">
-                  {accepted.map(req => {
-                    const myId = localStorage.getItem("user_id");
-                    const friendName = req.sender_id === myId ? req.receiver_name : req.sender_name;
-                    return (
-                      <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
-                      <span>{friendName}</span>
+                  {accepted.map(req => (
+                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
+                      <span>{req.receiver_name}</span>
                       <button
                         onClick={async () => {
                           const token = localStorage.getItem("token");
@@ -159,8 +177,7 @@ export default function FriendsPage() {
                         Entfernen
                       </button>
                     </li>
-                    );
-                  })}
+                  ))}
                 </ul>
               )}
             </section>

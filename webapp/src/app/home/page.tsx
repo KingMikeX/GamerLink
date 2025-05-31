@@ -1,21 +1,22 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
-import Post from '@/components/Post';
 import FullSideBar from '@/components/FullSideBar';
 import HomeShortCutPanel from '@/components/HomeShortCutPanel';
+import SimplePost from '@/components/SimplePost';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
   const [joinedTournaments, setJoinedTournaments] = useState<any[]>([]);
   const [createdTournaments, setCreatedTournaments] = useState<any[]>([]);
-  const [interests, setInterests] = useState<string[]>([]);
+  const [friendActivities, setFriendActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [joinedRes, createdRes, profileRes] = await Promise.all([
+        const [joinedRes, createdRes, profileRes, friendRes] = await Promise.all([
           fetch("http://localhost:8000/tournaments/me", {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           }),
@@ -25,15 +26,18 @@ export default function Home() {
           fetch("http://localhost:8000/profile/me", {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           }),
+          fetch("http://localhost:8000/profile/activities", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }),
         ]);
 
         const joinedData = await joinedRes.json();
         const createdData = await createdRes.json();
-        const profileData = await profileRes.json();
+        const friendActivityData = await friendRes.json();
 
         setJoinedTournaments(joinedData ?? []);
         setCreatedTournaments(createdData ?? []);
-        setInterests(profileData?.interests ?? []);
+        setFriendActivities(Array.isArray(friendActivityData) ? friendActivityData : []);
       } catch (error) {
         console.error("Fehler beim Laden der Daten:", error);
       } finally {
@@ -54,14 +58,32 @@ export default function Home() {
 
   const renderPosts = () => {
     const allPosts = [
-      ...joinedTournaments.map(t => ({ type: 'joined', content: `Beigetreten zu "${t.name}"` })),
-      ...createdTournaments.map(t => ({ type: 'created', content: `Erstellt: "${t.name}"` })),
-      ...interests.map(g => ({ type: 'interest', content: `Interessiert an ${g}` })),
+      ...joinedTournaments.map(t => ({
+        type: 'joined' as const,
+        content: `Beigetreten zu "${t.name}"`,
+        date: new Date(t.joined_at || t.created_at || t.date),
+      })),
+      ...createdTournaments.map(t => ({
+        type: 'created' as const,
+        content: `Erstellt: "${t.name}"`,
+        date: new Date(t.created_at || t.date),
+      })),
+      ...friendActivities.map(a => ({
+        type: a.type as 'joined' | 'created',
+        content: `${a.username} ${a.type === 'joined' ? 'ist beigetreten zu' : 'hat erstellt'}: "${a.tournament}"`,
+        date: new Date(a.date),
+      })),
     ];
 
-    return allPosts.map((post, index) => (
-      <Post key={index}>{post.content}</Post>
-    ));
+    allPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    return (
+      <div className="flex flex-col gap-3 mt-6">
+        {allPosts.map((post, index) => (
+          <SimplePost key={index} content={post.content} type={post.type} date={post.date} />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -69,7 +91,11 @@ export default function Home() {
       <FullSideBar which_Page={selectedPage[1]} />
       <div className="flex flex-1">
         <main className="flex-1 mr-20 ml-20 overflow-y-scroll no-scrollbar">
-          {loading ? <p>Loading personalized feed...</p> : renderPosts()}
+          {loading ? (
+            <p className="text-white mt-6">Lade personalisierten Feed...</p>
+          ) : (
+            renderPosts()
+          )}
         </main>
         <HomeShortCutPanel />
       </div>

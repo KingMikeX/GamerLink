@@ -75,6 +75,8 @@ class MatchOut(BaseModel):
     id: UUID
     team_a_name: str
     team_b_name: str
+    team_a_id: Optional[UUID]  
+    team_b_id: Optional[UUID]  
     is_played: bool
     played_at: Optional[datetime]
     winner_team_id: Optional[UUID]
@@ -133,6 +135,21 @@ class TournamentDetailOut(MyTournamentOut):
     teamanzahl: int
     teamgroeße: int
     participants_count: int
+    entry_fee: Optional[float]
+    timezone: Optional[str]
+    check_in_required: Optional[bool]
+    rules: Optional[str]
+    mode: Optional[str]
+    scoring_system: Optional[str]
+    registration_start: Optional[datetime]
+    registration_end: Optional[datetime]
+    is_public: Optional[bool]
+    invite_only: Optional[bool]
+
+
+class TeamNameUpdate(BaseModel):
+    team_a_name: str
+    team_b_name: str
 
 
 ###################Ab hier Router##################################################################################
@@ -466,7 +483,17 @@ def get_tournament_by_id(
         created_by_username=creator.username if creator else "Unbekannt",
         teamanzahl=tournament.teamanzahl,
         teamgroeße=tournament.teamgroeße,
-        participants_count=participants_count
+        participants_count=participants_count,
+        entry_fee=tournament.entry_fee,
+        timezone=tournament.timezone,
+        check_in_required=tournament.check_in_required,
+        rules=tournament.rules,
+        mode=tournament.mode,
+        scoring_system=tournament.scoring_system,
+        registration_start=tournament.registration_start,
+        registration_end=tournament.registration_end,
+        is_public=tournament.is_public,
+        invite_only=tournament.invite_only
     )
 
 @tournament_router.get("/{tournament_id}/participants", response_model=List[ParticipantOut])
@@ -654,6 +681,7 @@ def set_match_result(
     matches_played = True
     match.played_at = datetime.now(timezone.utc)
     match.winner_team_id = result_data.winner_team_id
+    match.played = True
 
     db.commit()
 
@@ -681,6 +709,8 @@ def get_tournament_matches(
             id=match.id,
             team_a_name=team_a.name if team_a else "Unbekannt",
             team_b_name=team_b.name if team_b else "Unbekannt",
+            team_a_id=team_a.id if team_a else None, 
+            team_b_id=team_b.id if team_b else None,  
             is_played=match.played,
             played_at=match.played_at,
             winner_team_id=match.winner_team_id,
@@ -702,3 +732,42 @@ def get_popular_games(db: Session = Depends(get_db)):
     )
 
     return [{"name": r[0], "count": r[1]} for r in result]
+
+
+@tournament_router.patch("/{tournament_id}/matches/{match_id}/rename-teams")
+def rename_match_teams(
+    tournament_id: UUID,
+    match_id: UUID,
+    names: TeamNameUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.role != "Admin":
+        raise HTTPException(status_code=403, detail="Nur Admins dürfen Teamnamen ändern.")
+
+    match = db.query(TournamentMatch).filter_by(id=match_id, tournament_id=tournament_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match nicht gefunden.")
+
+    # Suche Teams im Turnier anhand des Namens
+    team_a = (
+        db.query(TournamentTeam)
+        .filter_by(tournament_id=tournament_id, name=names.team_a_name)
+        .first()
+    )
+    team_b = (
+        db.query(TournamentTeam)
+        .filter_by(tournament_id=tournament_id, name=names.team_b_name)
+        .first()
+    )
+
+    # Speichere Namen im Match
+    match.team_a_name = names.team_a_name
+    match.team_b_name = names.team_b_name
+
+    # Wenn passende Teams existieren, speichere auch die IDs
+    match.team_a_id = team_a.id if team_a else None
+    match.team_b_id = team_b.id if team_b else None
+
+    db.commit()
+    return {"message": "Teamnamen und IDs wurden aktualisiert."}

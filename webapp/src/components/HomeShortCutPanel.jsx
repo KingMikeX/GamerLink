@@ -94,10 +94,11 @@ const [trendingGames, setTrendingGames] = useState([]);
             const name = t.name ?? "Unbenannt";
 
             return (
-              <div
-                key={index}
-                className="group bg-[#1e1f3d] hover:bg-[#2a2b4c] p-4 border border-indigo-700/30 hover:border-purple-500 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
-              >
+                  <div
+                    key={index}
+                    onClick={() => router.push(`/tournements/${t.id}/details`)}
+                    className="group bg-[#1e1f3d] hover:bg-[#2a2b4c] p-4 border border-indigo-700/30 hover:border-purple-500 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
+                  >
                 <div className="mb-1">
                   <h3 className="font-semibold text-white group-hover:text-pink-400 text-sm truncate">
                     {name}

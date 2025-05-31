@@ -19,6 +19,16 @@ interface Tournament {
   teamanzahl: number;
   teamgroeße: number;
   participants_count: number;
+  entry_fee: number;
+  timezone: string;
+  check_in_required: boolean;
+  rules: string;
+  mode: string;
+  scoring_system: string;
+  registration_start: string;
+  registration_end: string;
+  is_public: boolean;
+  invite_only: boolean;
 }
 
 interface Participant {
@@ -31,11 +41,14 @@ interface Match {
   id: string;
   team_a_name: string;
   team_b_name: string;
+  team_a_id?: string;  
+  team_b_id?: string;  
   is_played: boolean;
   played_at: string | null;
   winner_team_id: string | null;
   matchday: number;
 }
+
 
 export default function TournamentDetailsPage() {
   const { id } = useParams();
@@ -43,6 +56,88 @@ export default function TournamentDetailsPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editedTeamNames, setEditedTeamNames] = useState<Record<string, { teamA: string; teamB: string }>>({});
+  const handleTeamNameChange = (matchId: string, team: 'A' | 'B', value: string) => {
+  setEditedTeamNames(prev => ({
+    ...prev,
+    [matchId]: {
+      teamA: team === 'A' ? value : prev[matchId]?.teamA || "",
+      teamB: team === 'B' ? value : prev[matchId]?.teamB || "",
+    },
+  }));
+
+  setMatches(prev => prev.map(m =>
+    m.id === matchId
+      ? {
+          ...m,
+          team_a_name: team === 'A' ? value : m.team_a_name,
+          team_b_name: team === 'B' ? value : m.team_b_name,
+        }
+      : m
+  ));
+};
+
+const saveTeamNames = async (matchId: string) => {
+  const names = editedTeamNames[matchId];
+  if (!names) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/tournaments/${id}/matches/${matchId}/rename-teams`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        team_a_name: names.teamA,
+        team_b_name: names.teamB,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Fehler beim Speichern");
+
+    console.log("Teamnamen erfolgreich gespeichert");
+  } catch (error) {
+    console.error("Fehler beim Speichern der Teamnamen:", error);
+  }
+};
+
+
+  const submitResult = async (matchId: string, winnerName: string | null) => {
+    try {
+    const match = matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    let winnerTeamId: string | null = null;
+    if (winnerName === match.team_a_name) {
+      winnerTeamId = match.team_a_id!;
+    } else if (winnerName === match.team_b_name) {
+      winnerTeamId = match.team_b_id!;
+    }
+
+    const res = await fetch(`http://localhost:8000/tournaments/${id}/matches/${matchId}/result`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ winner_team_id: winnerTeamId }),
+    });
+
+    if (!res.ok) throw new Error("Fehler beim Eintragen");
+
+    // Nach erfolgreicher Speicherung: Matchliste aktualisieren
+    setMatches(prev =>
+      prev.map(m =>
+        m.id === matchId
+          ? { ...m, is_played: true, winner_team_id: winnerTeamId, played_at: new Date().toISOString() }
+          : m
+      )
+    );
+  } catch (error) {
+    console.error("Fehler beim Speichern:", error);
+  }
+};
 
   useEffect(() => {
     if (!id) return;
@@ -67,6 +162,35 @@ export default function TournamentDetailsPage() {
         setTournament(tournamentData);
         setParticipants(participantData);
         setMatches(matchData);
+        // 🔁 Gewinner in KO-Runden an nächste Matches weiterreichen (nur lokal)
+        const propagatedMatches = [...matchData];
+
+        for (let i = 0; i < propagatedMatches.length; i++) {
+          const match = propagatedMatches[i];
+          if (!match.is_played || !match.winner_team_id) continue;
+
+          for (let j = 0; j < propagatedMatches.length; j++) {
+            const nextMatch = propagatedMatches[j];
+
+            if (nextMatch.matchday !== match.matchday + 1) continue;
+
+            // Gewinnerteam-ID darf nicht doppelt gesetzt werden
+            const isAlreadyAssigned = nextMatch.team_a_id === match.winner_team_id || nextMatch.team_b_id === match.winner_team_id;
+            if (isAlreadyAssigned) continue;
+
+            if (nextMatch.team_a_name === "Unbekannt" && !nextMatch.team_a_id) {
+              nextMatch.team_a_id = match.winner_team_id;
+              nextMatch.team_a_name = match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
+              break;
+            } else if (nextMatch.team_b_name === "Unbekannt" && !nextMatch.team_b_id) {
+              nextMatch.team_b_id = match.winner_team_id;
+              nextMatch.team_b_name = match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
+              break;
+            }
+          }
+        }
+
+setMatches(propagatedMatches);
       } catch (error) {
         console.error("Fehler beim Laden der Turnierdetails:", error);
       } finally {
@@ -78,6 +202,17 @@ export default function TournamentDetailsPage() {
   }, [id]);
 
   if (loading || !tournament) return <p>Lade Turnierdetails...</p>;
+
+  const saveAllTeamNames = async () => {
+  try {
+    for (const matchId of Object.keys(editedTeamNames)) {
+      await saveTeamNames(matchId);
+    }
+    alert("Alle Teamnamen wurden gespeichert.");
+  } catch (error) {
+    console.error("Fehler beim Speichern aller Teamnamen:", error);
+  }
+};
 
   return (
     <div className="flex min-h-screen bg-[#252641] text-white">
@@ -95,6 +230,16 @@ export default function TournamentDetailsPage() {
             <p><strong>Teamgröße:</strong> {tournament.teamgroeße}</p>
             <p><strong>Teamanzahl:</strong> {tournament.teamanzahl}</p>
             <p><strong>Erstellt von:</strong> {tournament.created_by_username}</p>
+            <p><strong>Dauer:</strong> {tournament.duration_minutes} Minuten</p>
+            <p><strong>Gebühr:</strong> {tournament.entry_fee} €</p>
+            <p><strong>Zeitzone:</strong> {tournament.timezone}</p>
+            <p><strong>Check-In:</strong> {tournament.check_in_required ? "Ja" : "Nein"}</p>
+            <p><strong>Regeln:</strong> {tournament.rules}</p>
+            <p><strong>Modus:</strong> {tournament.mode}</p>
+            <p><strong>Scoring:</strong> {tournament.scoring_system}</p>
+            <p><strong>Registrierung:</strong> {new Date(tournament.registration_start).toLocaleString("de-DE")} – {new Date(tournament.registration_end).toLocaleString("de-DE")}</p>
+            <p><strong>Sichtbarkeit:</strong> {tournament.is_public ? "Öffentlich" : "Privat"}</p>
+            <p><strong>Nur mit Einladung:</strong> {tournament.invite_only ? "Ja" : "Nein"}</p>
           </div>
         </div>
 
@@ -112,14 +257,99 @@ export default function TournamentDetailsPage() {
         </div>
 
         <div>
+          <div className="flex mb-2">
+          <button
+            className="bg-purple-600 px-4 py-2 rounded text-white text-sm hover:bg-purple-700"
+            onClick={saveAllTeamNames}
+          >
+            Alle Teamnamen speichern
+          </button>
+        </div>
+
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Flag className="w-6 h-6" /> Matches</h2>
           {matches.length > 0 ? (
             <ul>
-              {matches.map((m) => (
-                <li key={m.id} className="text-gray-300 mb-2">
-                  <span className="font-semibold">Matchday {m.matchday}:</span> {m.team_a_name} vs. {m.team_b_name} {m.is_played ? "(Beendet)" : "(Ausstehend)"}
-                </li>
-              ))}
+
+        {matches.map((m) => {
+        const names = m.is_played
+        ? { teamA: m.team_a_name, teamB: m.team_b_name } 
+        : editedTeamNames[m.id] || { teamA: m.team_a_name, teamB: m.team_b_name };
+
+        const winnerName =
+          m.winner_team_id === m.team_a_id
+            ? m.team_a_name
+            : m.winner_team_id === m.team_b_id
+            ? m.team_b_name
+            : null;
+
+        const isDraw = m.is_played && !m.winner_team_id;
+
+        return (
+          <div key={m.id} className="text-gray-300 mb-4 border-b pb-2">
+            <p className="mb-1">
+              <span className="font-semibold">Matchday {m.matchday}:</span>{" "}
+              <input
+                className="bg-gray-700 border border-gray-500 px-2 py-1 rounded mr-1 text-white"
+                value={names.teamA}
+                onChange={(e) => handleTeamNameChange(m.id, "A", e.target.value)}
+                placeholder="Team A"
+                disabled={m.is_played}
+              />{" "}
+              vs.{" "}
+              <input
+                className="bg-gray-700 border border-gray-500 px-2 py-1 rounded mr-1 text-white"
+                value={names.teamB}
+                onChange={(e) => handleTeamNameChange(m.id, "B", e.target.value)}
+                placeholder="Team B"
+                disabled={m.is_played}
+              />
+              {m.is_played ? (
+                <span className="ml-2 text-green-400 font-bold">(Beendet)</span>
+              ) : (
+                <span className="ml-2 text-yellow-400">(Ausstehend)</span>
+              )}
+            </p>
+
+            {!m.is_played ? (
+              <div className="flex gap-2 mt-1">
+                <button
+                  className="bg-green-600 px-3 py-1 rounded text-white text-sm hover:bg-green-700"
+                  onClick={() => submitResult(m.id, names.teamA)}
+                >
+                  Sieger: {names.teamA}
+                </button>
+                <button
+                  className="bg-blue-600 px-3 py-1 rounded text-white text-sm hover:bg-blue-700"
+                  onClick={() => submitResult(m.id, names.teamB)}
+                >
+                  Sieger: {names.teamB}
+                </button>
+                <button
+                  className="bg-gray-600 px-3 py-1 rounded text-white text-sm hover:bg-gray-700"
+                  onClick={() => submitResult(m.id, null)}
+                >
+                  Unentschieden
+                </button>
+              </div>
+            ) : (
+              <div className="mt-2">
+                {isDraw ? (
+                  <span className="text-gray-400 italic">Unentschieden</span>
+                ) : (
+                <span className="text-green-400 font-bold">
+                  Sieger: {winnerName}
+                </span>
+
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+
+
+
             </ul>
           ) : (
             <p className="text-gray-500">Keine Matches gefunden.</p>

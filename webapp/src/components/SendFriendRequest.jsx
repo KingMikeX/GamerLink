@@ -48,6 +48,7 @@ export default function SendFriendRequest() {
       console.error('Fehler:', error);
       setMessage('Netzwerkfehler');
     }
+ 
   };
 
   return (

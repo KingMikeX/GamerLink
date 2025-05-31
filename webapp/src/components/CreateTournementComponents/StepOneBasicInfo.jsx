@@ -116,65 +116,7 @@ useEffect(() => {
     />
     </div>
   </div>
-
-      <div className="mb-4">
-        <h3 className="text-white text-lg font-semibold">Punktesystem</h3>
-        <p className="text-sm text-gray-300 mt-1">
-          Lege fest, wie viele Punkte ein Team für Sieg, Unentschieden oder Niederlage erhält.
-        </p>
-      </div>
-
-      
-      {/* Point System */}
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Sieg</label>
-          <input
-            type="number"
-            min={0}
-            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
-            value={formData.scoringWin ?? ''}
-            onChange={(e) =>
-              updateFormData({
-                ...formData,
-                scoringWin: e.target.value === '' ? '' : parseInt(e.target.value),
-              })
-            }
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Unentschieden</label>
-          <input
-            type="number"
-            min={0}
-            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
-            value={formData.scoringDraw ?? ''}
-            onChange={(e) =>
-              updateFormData({
-                ...formData,
-                scoringDraw: e.target.value === '' ? '' : parseInt(e.target.value),
-              })
-            }
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Niederlage</label>
-          <input
-            type="number"
-            min={0}
-            className="w-full bg-[#131320] px-3 py-2 rounded-md text-white"
-            value={formData.scoringLose ?? ''}
-            onChange={(e) =>
-              updateFormData({
-                ...formData,
-                scoringLose: e.target.value === '' ? '' : parseInt(e.target.value),
-              })
-            }
-          />
-        </div>
-      </div>
-
-
+ 
       
       {/* Tournament Rules */}
       <div className="mb-6">

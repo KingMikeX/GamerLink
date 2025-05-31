@@ -216,7 +216,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex font-sans text-white bg-[#252641]">
-      <FullSideBar which_Page={selectedPage[1]}/>
+      <FullSideBar which_Page={selectedPage[0]}/>
 
       <main className="flex-1 overflow-y-auto px-8 py-10 space-y-16">
         <section id="section-personal">
