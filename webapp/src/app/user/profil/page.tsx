@@ -218,7 +218,64 @@ export default function ProfilePage() {
     <div className="min-h-screen flex font-sans text-white bg-[#252641]">
       <FullSideBar which_Page={selectedPage[0]}/>
 
+
       <main className="flex-1 overflow-y-auto px-8 py-10 space-y-16">
+
+      <div className="w-full flex flex-col items-center mb-10">
+        <label htmlFor="profilePicUpload" className="cursor-pointer">
+          {profile.image ? (
+            <img
+              src={`http://localhost:8000${profile.image}`}
+              alt="Profilbild"
+              className="w-28 h-28 rounded-full border border-[#555] object-cover hover:opacity-80 transition"
+            />
+          ) : (
+            <div className="w-28 h-28 rounded-full bg-[#1A1C2D] flex items-center justify-center text-[#999] hover:opacity-80 transition">
+              Kein Bild
+            </div>
+          )}
+        </label>
+        <div className="text-lg font-semibold text-white mt-3">{profile.username}</div>
+
+        <input
+          id="profilePicUpload"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+              const res = await fetch("http://localhost:8000/profile/upload-picture", {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: formData,
+              });
+
+              if (!res.ok) {
+                const err = await res.json();
+                alert("Fehler beim Hochladen: " + (err.detail || "Unbekannter Fehler"));
+                return;
+              }
+
+              const data = await res.json();
+              setProfile((prev) => ({ ...prev, image: data.profile_picture }));
+            } catch (error) {
+              console.error("Upload fehlgeschlagen:", error);
+              alert("Fehler beim Hochladen des Bildes.");
+            }
+          }}
+        />
+      </div>
+
+
+
         <section id="section-personal">
           <h2 className="text-[#da4ecc] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PERSÖNLICHE INFORMATIONEN</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">

@@ -123,6 +123,8 @@ class MyTournamentOut(BaseModel):
     created_at: datetime
     created_by_username: str
     participants_count: Optional[int] = 0
+    joined_at: Optional[datetime] = None
+
 
     class Config:
         from_attributes = True  # Pydantic v2
@@ -316,6 +318,12 @@ def get_my_tournaments(
     result = []
     for t in tournaments:
         creator = db.query(User).filter(User.id == t.created_by).first()
+
+        participant = db.query(TournamentParticipant).filter_by(
+            tournament_id=t.id,
+            user_id=current_user.id
+        ).first()
+
         result.append(MyTournamentOut(
             id=t.id,
             name=t.name,
@@ -326,7 +334,8 @@ def get_my_tournaments(
             max_players=t.max_players,
             description=t.description,
             created_at=t.created_at,
-            created_by_username=creator.username if creator else "Unbekannt"
+            created_by_username=creator.username if creator else "Unbekannt",
+            joined_at=participant.joined_at if participant else None
         ))
     return result
 

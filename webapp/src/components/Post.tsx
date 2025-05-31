@@ -4,12 +4,21 @@ import React from 'react';
 
 interface PostProps {
   children: React.ReactNode;
+  createdAt: string; // ISO-Date
 }
 
-export default function Post({ children }: PostProps) {
+export default function Post({ children, createdAt }: PostProps) {
+  const date = new Date(createdAt);
+  const formattedDate = date.toLocaleString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   return (
     <div className="p-6">
-      {/* User Post - Card Style */}
       <div className="bg-indigo-900/40 backdrop-blur-sm mr-10 mb-6 ml-10 border border-indigo-700/30 rounded-2xl">
         <div className="flex items-center p-4">
           <div className="flex justify-center items-center bg-gradient-to-br from-indigo-600 to-purple-700 shadow-inner rounded-full w-12 h-12 font-bold text-white text-lg">E</div>
@@ -18,11 +27,10 @@ export default function Post({ children }: PostProps) {
             <p className="text-indigo-300 text-xs">Turnier-Champion</p>
           </div>
           <div className="flex items-center ml-auto text-gray-400 text-sm">
-            <span className="bg-indigo-800/50 px-2 py-0.5 rounded-full text-xs">VOR 2 STUNDEN</span>
+            <span className="bg-indigo-800/50 px-2 py-0.5 rounded-full text-xs">{formattedDate}</span>
           </div>
         </div>
 
-        {/* Dynamischer Post-Inhalt */}
         <div className="p-4 text-white text-sm border-t border-indigo-800">
           {children}
         </div>

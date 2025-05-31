@@ -57,6 +57,9 @@ export default function TournamentDetailsPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [editedTeamNames, setEditedTeamNames] = useState<Record<string, { teamA: string; teamB: string }>>({});
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
   const handleTeamNameChange = (matchId: string, team: 'A' | 'B', value: string) => {
   setEditedTeamNames(prev => ({
     ...prev,
@@ -139,67 +142,90 @@ const saveTeamNames = async (matchId: string) => {
   }
 };
 
-  useEffect(() => {
-    if (!id) return;
+useEffect(() => {
+  if (!id) return;
 
-    const fetchData = async () => {
-      try {
-        const resTournament = await fetch(`http://localhost:8000/tournaments/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const tournamentData = await resTournament.json();
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/profile/me", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!res.ok) throw new Error("Fehler beim Laden des Benutzers");
 
-        const resParticipants = await fetch(`http://localhost:8000/tournaments/${id}/participants`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const participantData = await resParticipants.json();
+      const data = await res.json();
+      setCurrentUsername(data.username);
+      setIsAdmin(data.is_admin ?? false); // Falls `is_admin` im Backend existiert
+    } catch (err) {
+      console.error("Fehler beim Laden des aktuellen Benutzers:", err);
+    }
+  };
 
-        const resMatches = await fetch(`http://localhost:8000/tournaments/${id}/matches`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const matchData = await resMatches.json();
+  const fetchData = async () => {
+    await fetchCurrentUser(); // 👈 zuerst Benutzer laden
 
-        setTournament(tournamentData);
-        setParticipants(participantData);
-        setMatches(matchData);
-        // 🔁 Gewinner in KO-Runden an nächste Matches weiterreichen (nur lokal)
-        const propagatedMatches = [...matchData];
+    try {
+      const resTournament = await fetch(`http://localhost:8000/tournaments/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const tournamentData = await resTournament.json();
 
-        for (let i = 0; i < propagatedMatches.length; i++) {
-          const match = propagatedMatches[i];
-          if (!match.is_played || !match.winner_team_id) continue;
+      const resParticipants = await fetch(`http://localhost:8000/tournaments/${id}/participants`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const participantData = await resParticipants.json();
 
-          for (let j = 0; j < propagatedMatches.length; j++) {
-            const nextMatch = propagatedMatches[j];
+      const resMatches = await fetch(`http://localhost:8000/tournaments/${id}/matches`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const matchData = await resMatches.json();
 
-            if (nextMatch.matchday !== match.matchday + 1) continue;
+      setTournament(tournamentData);
+      setParticipants(participantData);
 
-            // Gewinnerteam-ID darf nicht doppelt gesetzt werden
-            const isAlreadyAssigned = nextMatch.team_a_id === match.winner_team_id || nextMatch.team_b_id === match.winner_team_id;
-            if (isAlreadyAssigned) continue;
+      // Matches propagieren
+      const propagatedMatches = [...matchData];
 
-            if (nextMatch.team_a_name === "Unbekannt" && !nextMatch.team_a_id) {
-              nextMatch.team_a_id = match.winner_team_id;
-              nextMatch.team_a_name = match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
-              break;
-            } else if (nextMatch.team_b_name === "Unbekannt" && !nextMatch.team_b_id) {
-              nextMatch.team_b_id = match.winner_team_id;
-              nextMatch.team_b_name = match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
-              break;
-            }
+      for (let i = 0; i < propagatedMatches.length; i++) {
+        const match = propagatedMatches[i];
+        if (!match.is_played || !match.winner_team_id) continue;
+
+        for (let j = 0; j < propagatedMatches.length; j++) {
+          const nextMatch = propagatedMatches[j];
+
+          if (nextMatch.matchday !== match.matchday + 1) continue;
+
+          const isAlreadyAssigned =
+            nextMatch.team_a_id === match.winner_team_id ||
+            nextMatch.team_b_id === match.winner_team_id;
+          if (isAlreadyAssigned) continue;
+
+          if (nextMatch.team_a_name === "Unbekannt" && !nextMatch.team_a_id) {
+            nextMatch.team_a_id = match.winner_team_id;
+            nextMatch.team_a_name =
+              match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
+            break;
+          } else if (nextMatch.team_b_name === "Unbekannt" && !nextMatch.team_b_id) {
+            nextMatch.team_b_id = match.winner_team_id;
+            nextMatch.team_b_name =
+              match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
+            break;
           }
         }
-
-setMatches(propagatedMatches);
-      } catch (error) {
-        console.error("Fehler beim Laden der Turnierdetails:", error);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchData();
-  }, [id]);
+      setMatches(propagatedMatches);
+    } catch (error) {
+      console.error("Fehler beim Laden der Turnierdetails:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [id]);
+
 
   if (loading || !tournament) return <p>Lade Turnierdetails...</p>;
 
@@ -213,6 +239,8 @@ setMatches(propagatedMatches);
     console.error("Fehler beim Speichern aller Teamnamen:", error);
   }
 };
+
+const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isAdmin;
 
   return (
     <div className="flex min-h-screen bg-[#252641] text-white">
@@ -257,14 +285,17 @@ setMatches(propagatedMatches);
         </div>
 
         <div>
-          <div className="flex mb-2">
-          <button
-            className="bg-purple-600 px-4 py-2 rounded text-white text-sm hover:bg-purple-700"
-            onClick={saveAllTeamNames}
-          >
-            Alle Teamnamen speichern
-          </button>
-        </div>
+          {isOwnerOrAdmin && (
+            <div className="flex mb-2">
+              <button
+                className="bg-purple-600 px-4 py-2 rounded text-white text-sm hover:bg-purple-700"
+                onClick={saveAllTeamNames}
+              >
+                Alle Teamnamen speichern
+              </button>
+            </div>
+          )}
+
 
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Flag className="w-6 h-6" /> Matches</h2>
           {matches.length > 0 ? (
@@ -293,7 +324,7 @@ setMatches(propagatedMatches);
                 value={names.teamA}
                 onChange={(e) => handleTeamNameChange(m.id, "A", e.target.value)}
                 placeholder="Team A"
-                disabled={m.is_played}
+                disabled={m.is_played || !isOwnerOrAdmin}
               />{" "}
               vs.{" "}
               <input
@@ -301,7 +332,7 @@ setMatches(propagatedMatches);
                 value={names.teamB}
                 onChange={(e) => handleTeamNameChange(m.id, "B", e.target.value)}
                 placeholder="Team B"
-                disabled={m.is_played}
+                disabled={m.is_played || !isOwnerOrAdmin}
               />
               {m.is_played ? (
                 <span className="ml-2 text-green-400 font-bold">(Beendet)</span>
@@ -310,7 +341,7 @@ setMatches(propagatedMatches);
               )}
             </p>
 
-            {!m.is_played ? (
+            {!m.is_played && isOwnerOrAdmin ? (
               <div className="flex gap-2 mt-1">
                 <button
                   className="bg-green-600 px-3 py-1 rounded text-white text-sm hover:bg-green-700"

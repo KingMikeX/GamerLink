@@ -45,7 +45,13 @@ export default function TournamentList() {
         });
         if (!res.ok) throw new Error("Fehler beim Laden der Turniere.");
         const data = await res.json();
-        setTournaments(data);
+
+        // Nach Startdatum sortieren (neueste zuerst)
+        const sorted = data.sort((a: Tournament, b: Tournament) =>
+          new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+        );
+
+        setTournaments(sorted);
       } catch (err) {
         setError("Turniere konnten nicht geladen werden.");
         console.error(err);

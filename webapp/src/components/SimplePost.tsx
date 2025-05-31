@@ -15,11 +15,13 @@ export default function SimplePost({ content, type = 'created', date }: SimplePo
     interest: 'text-green-400',
   };
 
-  const formattedTime = date ? new Date(date).toLocaleTimeString() : new Date().toLocaleTimeString();
+  const timestamp = date ? new Date(date) : new Date();
+
+  const formattedTimestamp = `${timestamp.toLocaleDateString('de-DE')} ${timestamp.toLocaleTimeString('de-DE', { hour12: false })}`;
 
   return (
     <div className="bg-[#1e1e1e] text-[#d4d4d4] font-mono text-sm p-3 rounded-md shadow-sm border border-[#333]">
-      <span className="text-[#6a9955]">[{formattedTime}]</span>{' '}
+      <span className="text-[#6a9955]">[{formattedTimestamp}]</span>{' '}
       <span className={colorClasses[type]}>
         {content}
       </span>

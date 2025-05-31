@@ -79,9 +79,6 @@ const [trendingGames, setTrendingGames] = useState([]);
             <Trophy size={16} className="mr-2 text-pink-500" />
             Anstehende Turniere
           </h2>
-          <button className="flex items-center text-pink-400 hover:text-pink-300 text-sm transition-colors">
-            alle <ChevronRight size={14} />
-          </button>
         </div>
 
         <div className="space-y-4">
@@ -106,11 +103,9 @@ const [trendingGames, setTrendingGames] = useState([]);
                 </div>
                 <p className="text-indigo-300 text-xs mb-3">{game}</p>
                 <div className="flex justify-between items-center text-[11px] font-medium">
-                  <span className="bg-pink-900/40 text-pink-300 px-2 py-1 rounded-md">
                     <span className="bg-pink-900/40 text-pink-300 px-2 py-1 rounded-md">
                       {t.participants_count ?? 0}/{t.max_players} Spieler
                     </span>
-                  </span>
                   <span className="bg-blue-900/40 text-blue-300 px-2 py-1 rounded-md">
                     {timeLeft}
                   </span>
@@ -137,9 +132,6 @@ const [trendingGames, setTrendingGames] = useState([]);
             <div className="bg-green-500 mr-2 rounded-full w-3 h-3 animate-pulse"></div>
             Spiele im Trend
           </h2>
-          <button className="flex items-center text-pink-400 hover:text-pink-300 text-sm transition-colors">
-            alle <ChevronRight size={14} />
-          </button>
         </div>
 
         <div className="space-y-4">
