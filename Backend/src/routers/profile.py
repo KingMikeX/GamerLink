@@ -58,6 +58,7 @@ def get_own_profile(current_user: User = Depends(get_current_user), db: Session 
         "user_id": str(current_user.id),
         "username": current_user.username,
         "email": current_user.email,
+        "role": current_user.role,
 
         # ✅ Felder aus UserProfile-Tabelle
         "region": profile.region,
@@ -493,3 +494,29 @@ def get_public_profile_by_id(user_id: str, db: Session = Depends(get_db)):
         youtube=profile.youtube,
         is_online=profile.is_online
     )
+
+@profile_router.post("/subscribe")
+def subscribe_user(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.role == "Subscriber":
+        return {"message": "Du bist bereits Subscriber."}
+
+    current_user.role = "Subscriber"
+    db.commit()
+    return {"message": "Du bist jetzt Subscriber. Viel Spaß!"}
+
+@profile_router.post("/unsubscribe")
+def unsubscribe_user(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.role != "Subscriber":
+        return {"message": "Du bist kein Subscriber."}
+
+    current_user.role = "User"  # zurück auf Standardrolle
+    db.commit()
+    return {"message": "Du bist kein Subscriber mehr."}
+
+

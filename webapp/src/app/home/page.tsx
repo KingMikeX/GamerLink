@@ -77,14 +77,23 @@ export default function Home() {
 
     allPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
+if (allPosts.length === 0) {
     return (
-      <div className="flex flex-col gap-3 mt-6">
-        {allPosts.map((post, index) => (
-          <SimplePost key={index} content={post.content} type={post.type} date={post.date} />
-        ))}
+      <div className="mt-10 text-center text-gray-400">
+        <p>Dein Feed ist aktuell leer.</p>
+        <p>Erstelle ein Turnier oder tritt einem bei, um Aktivitäten zu sehen!</p>
       </div>
     );
-  };
+  }
+
+  return (
+    <div className="flex flex-col gap-3 mt-6">
+      {allPosts.map((post, index) => (
+        <SimplePost key={index} content={post.content} type={post.type} date={post.date} />
+      ))}
+    </div>
+  );
+  }
 
   return (
     <div className="flex max-h-screen">

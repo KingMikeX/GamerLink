@@ -28,12 +28,18 @@ export default function FullSideBar({which_Page}) {
     router.push('/home')
   }
 
+  const goToSubscribe = () => {
+  router.push('/user/subscribe');
+  }
+
+
   var selectedPage = {
     '/user/profile': 0,
     '/home': 1,
     '/tournements/list': 2,
     '/user/friends': 3,
     '/games/all': 4,
+    '/user/subscribe': 5,
   }
 
   function is_page_selected(open_page, forwarding_page_number){
@@ -51,6 +57,7 @@ if(which_Page == 0)re
         <SidebarItem icon={<Zap size={20} />} text="Feed" active onClick={goToFeed} selected={is_page_selected(selectedPage[which_Page], 1)}/>
         <SidebarItem icon={<Swords size={20} />} text="Tournaments" active onClick={goToTournaments} selected={is_page_selected(selectedPage[which_Page], 2)}/>
         <SidebarItem icon={<Users size={20} />} text="Friends" active onClick={goToFriends} selected={is_page_selected(selectedPage[which_Page], 3)}/>
+        <SidebarItem icon={<Gamepad2 size={20} />} text="Subscribe" active onClick={goToSubscribe} selected={is_page_selected(selectedPage[which_Page], 5)}/>
         </Sidebar> 
     </div>
     </aside>

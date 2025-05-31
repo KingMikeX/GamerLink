@@ -164,8 +164,8 @@ def create_tournament(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if current_user.role != "Admin":
-        raise HTTPException(status_code=403, detail="Nur Admins dürfen Turniere erstellen.")
+    if current_user.role not in {"Admin", "Subscriber"}:
+        raise HTTPException(status_code=403, detail="Nur Admins oder zahlende Abonnenten dürfen Turniere erstellen.")
 
     tournament = Tournament(
         name=tournament_data.name,
@@ -226,31 +226,56 @@ def create_tournament(
 
     if mode == "singleElimination":
         from math import log2, ceil
-        total_rounds = ceil(log2(len(teams)))
-        current_round_teams = teams
+
+        total_teams = len(teams)
+        total_rounds = ceil(log2(total_teams))
+        current_round_teams = teams[:]
 
         for round_num in range(1, total_rounds + 1):
-            num_matches = len(current_round_teams) // 2
-            for i in range(num_matches):
-                if round_num == 1:
-                    # Erste Runde – bekannte Teams
-                    team_a = current_round_teams[i * 2]
-                    team_b = current_round_teams[i * 2 + 1]
+            next_round_teams = []
+
+            # Runde mit echten Teams
+            if round_num == 1:
+                if len(current_round_teams) % 2 == 1:
+                    # Letztes Team bekommt Freilos
+                    bye_team = current_round_teams.pop()
+                else:
+                    bye_team = None
+
+                for i in range(0, len(current_round_teams), 2):
+                    team_a = current_round_teams[i]
+                    team_b = current_round_teams[i + 1]
                     db.add(TournamentMatch(
                         tournament_id=tournament.id,
                         team_a_id=team_a.id,
                         team_b_id=team_b.id,
                         matchday=round_num
                     ))
-                else:
-                    # Spätere Runden – unbekannte Teams
+                    next_round_teams.append(None)  # Platzhalter
+
+                if bye_team:
+                    # Freilos-Team wird direkt in nächste Runde gesetzt (z. B. als team_a)
+                    db.add(TournamentMatch(
+                        tournament_id=tournament.id,
+                        team_a_id=bye_team.id,
+                        team_b_id=None,
+                        matchday=round_num + 1
+                    ))
+                    next_round_teams.append(None)  # Platzhalter für Folge-Runde
+
+            else:
+                # Nur Platzhalter-Matches (Teams noch nicht bekannt)
+                for _ in range(len(current_round_teams) // 2):
                     db.add(TournamentMatch(
                         tournament_id=tournament.id,
                         team_a_id=None,
                         team_b_id=None,
                         matchday=round_num
                     ))
-            current_round_teams = [None] * num_matches  # Platzhalter
+                    next_round_teams.append(None)
+
+            current_round_teams = next_round_teams
+
 
 
     elif mode == "roundRobin":
@@ -652,17 +677,31 @@ def set_match_result(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # 🔐 Nur Admins erlaubt
-    if current_user.role != "Admin":
-        raise HTTPException(status_code=403, detail="Nur Admins dürfen Ergebnisse eintragen.")
+    # 🔍 Turnier holen
+    tournament = db.query(Tournament).filter_by(id=tournament_id).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Turnier nicht gefunden.")
 
-    # 🔎 Match holen
+    # ✅ Zugriff prüfen
+    is_admin = current_user.role == "Admin"
+    is_creator = tournament.created_by == current_user.id
+    if not (is_admin or is_creator):
+        raise HTTPException(status_code=403, detail="Nur Admins oder Turnier-Ersteller dürfen Ergebnisse eintragen.")
+
+    # 🔍 Match holen
     match = db.query(TournamentMatch).filter_by(id=match_id, tournament_id=tournament_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match nicht gefunden.")
     
     if match.played:
         raise HTTPException(status_code=400, detail="Dieses Match wurde bereits gewertet.")
+
+    # 🛑 Kein Ergebnis setzen, wenn Team A oder B fehlt
+    if match.team_a_id is None or match.team_b_id is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Das Match enthält noch unbekannte Teams. Bitte zuerst beide Teams zuweisen."
+        )
 
     # 🔢 Punktevergabe vorbereiten
     team_a = db.query(TournamentTeam).filter_by(id=match.team_a_id).first()
@@ -687,7 +726,6 @@ def set_match_result(
     team_b.matches_played += 1
 
     # ✅ Ergebnis speichern
-    matches_played = True
     match.played_at = datetime.now(timezone.utc)
     match.winner_team_id = result_data.winner_team_id
     match.played = True
@@ -695,6 +733,7 @@ def set_match_result(
     db.commit()
 
     return {"message": "Ergebnis wurde erfolgreich eingetragen."}
+
 
 @tournament_router.get("/{tournament_id}/matches", response_model=List[MatchOut])
 def get_tournament_matches(
@@ -751,32 +790,52 @@ def rename_match_teams(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if current_user.role != "Admin":
-        raise HTTPException(status_code=403, detail="Nur Admins dürfen Teamnamen ändern.")
+    tournament = db.query(Tournament).filter_by(id=tournament_id).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Turnier nicht gefunden.")
+
+    if current_user.role != "Admin" and tournament.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Nur Admins oder der Ersteller dürfen umbenennen.")
 
     match = db.query(TournamentMatch).filter_by(id=match_id, tournament_id=tournament_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match nicht gefunden.")
 
-    # Suche Teams im Turnier anhand des Namens
-    team_a = (
-        db.query(TournamentTeam)
-        .filter_by(tournament_id=tournament_id, name=names.team_a_name)
-        .first()
-    )
-    team_b = (
-        db.query(TournamentTeam)
-        .filter_by(tournament_id=tournament_id, name=names.team_b_name)
-        .first()
-    )
+    def handle_team_assignment(team_side: str, new_name: str):
+        if not new_name or new_name.strip().lower() == "unbekannt":
+            return  # Kein Team setzen oder ändern, wenn "Unbekannt" übergeben wurde
 
-    # Speichere Namen im Match
-    match.team_a_name = names.team_a_name
-    match.team_b_name = names.team_b_name
+        team_id_attr = f"{team_side}_id"
+        team_id = getattr(match, team_id_attr)
 
-    # Wenn passende Teams existieren, speichere auch die IDs
-    match.team_a_id = team_a.id if team_a else None
-    match.team_b_id = team_b.id if team_b else None
+        # Falls Team gesetzt ist, Namen ändern
+        if team_id:
+            team = db.query(TournamentTeam).filter_by(id=team_id).first()
+            if team:
+                team.name = new_name
+        else:
+            # Andernfalls: passendes Team nach Namen suchen und setzen
+            existing_team = db.query(TournamentTeam).filter_by(
+                tournament_id=tournament_id,
+                name=new_name
+            ).first()
+
+            if existing_team:
+                setattr(match, team_id_attr, existing_team.id)
+            else:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Team mit dem Namen '{new_name}' existiert nicht in diesem Turnier."
+                )
+
+    # Teamnamen individuell behandeln (nur wenn übergeben)
+    if names.team_a_name:
+        handle_team_assignment("team_a", names.team_a_name)
+
+    if names.team_b_name:
+        handle_team_assignment("team_b", names.team_b_name)
 
     db.commit()
-    return {"message": "Teamnamen und IDs wurden aktualisiert."}
+    return {"message": "Teamnamen aktualisiert oder Teams zugewiesen."}
+
+

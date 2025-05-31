@@ -50,6 +50,7 @@ interface Match {
 }
 
 
+
 export default function TournamentDetailsPage() {
   const { id } = useParams();
   const [tournament, setTournament] = useState<Tournament | null>(null);
@@ -59,13 +60,49 @@ export default function TournamentDetailsPage() {
   const [editedTeamNames, setEditedTeamNames] = useState<Record<string, { teamA: string; teamB: string }>>({});
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const isParticipant = Array.isArray(participants) && participants.some(p => p.username === currentUsername);
 
-  const handleTeamNameChange = (matchId: string, team: 'A' | 'B', value: string) => {
+
+
+  const [joining, setJoining] = useState(false);
+
+const handleJoin = async () => {
+  try {
+    setJoining(true);
+    const res = await fetch(`http://localhost:8000/tournaments/${id}/join`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      alert(errorData.detail || "Beitritt fehlgeschlagen.");
+      return;
+    }
+
+    const result = await res.json();
+    alert(result.message || "Erfolgreich beigetreten.");
+    window.location.reload(); // Optional: Seite neu laden
+  } catch (err) {
+    console.error(err);
+    alert("Fehler beim Beitritt.");
+  } finally {
+    setJoining(false);
+  }
+};
+
+const handleTeamNameChange = (matchId: string, team: 'A' | 'B', value: string) => {
+  const existing = editedTeamNames[matchId];
+  const match = matches.find(m => m.id === matchId);
+  if (!match) return;
+
   setEditedTeamNames(prev => ({
     ...prev,
     [matchId]: {
-      teamA: team === 'A' ? value : prev[matchId]?.teamA || "",
-      teamB: team === 'B' ? value : prev[matchId]?.teamB || "",
+      teamA: team === 'A' ? value : existing?.teamA ?? match.team_a_name,
+      teamB: team === 'B' ? value : existing?.teamB ?? match.team_b_name,
     },
   }));
 
@@ -80,9 +117,21 @@ export default function TournamentDetailsPage() {
   ));
 };
 
+
 const saveTeamNames = async (matchId: string) => {
   const names = editedTeamNames[matchId];
   if (!names) return;
+
+  // Wenn ein Teamname leer ist, sende ihn NICHT mit (sonst wird z. B. team_b_id überschrieben)
+  const payload: any = {};
+  if (names.teamA && names.teamA.trim() !== "") {
+    payload.team_a_name = names.teamA;
+  }
+  if (names.teamB && names.teamB.trim() !== "") {
+    payload.team_b_name = names.teamB;
+  }
+
+  if (Object.keys(payload).length === 0) return; // nichts zu speichern
 
   try {
     const res = await fetch(`http://localhost:8000/tournaments/${id}/matches/${matchId}/rename-teams`, {
@@ -91,19 +140,20 @@ const saveTeamNames = async (matchId: string) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({
-        team_a_name: names.teamA,
-        team_b_name: names.teamB,
-      }),
+      body: JSON.stringify(payload),
     });
 
-    if (!res.ok) throw new Error("Fehler beim Speichern");
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Fehler beim Speichern");
+    }
 
     console.log("Teamnamen erfolgreich gespeichert");
   } catch (error) {
     console.error("Fehler beim Speichern der Teamnamen:", error);
   }
 };
+
 
 
   const submitResult = async (matchId: string, winnerName: string | null) => {
@@ -127,7 +177,12 @@ const saveTeamNames = async (matchId: string) => {
       body: JSON.stringify({ winner_team_id: winnerTeamId }),
     });
 
-    if (!res.ok) throw new Error("Fehler beim Eintragen");
+    if (!res.ok) {
+      const errorData = await res.json();
+      alert(errorData.detail || "Fehler beim Eintragen.");
+      return;
+  }
+
 
     // Nach erfolgreicher Speicherung: Matchliste aktualisieren
     setMatches(prev =>
@@ -187,34 +242,6 @@ useEffect(() => {
       // Matches propagieren
       const propagatedMatches = [...matchData];
 
-      for (let i = 0; i < propagatedMatches.length; i++) {
-        const match = propagatedMatches[i];
-        if (!match.is_played || !match.winner_team_id) continue;
-
-        for (let j = 0; j < propagatedMatches.length; j++) {
-          const nextMatch = propagatedMatches[j];
-
-          if (nextMatch.matchday !== match.matchday + 1) continue;
-
-          const isAlreadyAssigned =
-            nextMatch.team_a_id === match.winner_team_id ||
-            nextMatch.team_b_id === match.winner_team_id;
-          if (isAlreadyAssigned) continue;
-
-          if (nextMatch.team_a_name === "Unbekannt" && !nextMatch.team_a_id) {
-            nextMatch.team_a_id = match.winner_team_id;
-            nextMatch.team_a_name =
-              match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
-            break;
-          } else if (nextMatch.team_b_name === "Unbekannt" && !nextMatch.team_b_id) {
-            nextMatch.team_b_id = match.winner_team_id;
-            nextMatch.team_b_name =
-              match.winner_team_id === match.team_a_id ? match.team_a_name : match.team_b_name;
-            break;
-          }
-        }
-      }
-
       setMatches(propagatedMatches);
     } catch (error) {
       console.error("Fehler beim Laden der Turnierdetails:", error);
@@ -270,6 +297,19 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
             <p><strong>Nur mit Einladung:</strong> {tournament.invite_only ? "Ja" : "Nein"}</p>
           </div>
         </div>
+
+        {!isParticipant && (
+        <div className="mb-8">
+          <button
+            className="px-5 py-2 bg-[#dd17c9] hover:bg-pink-600 rounded-full text-white font-bold text-sm"
+            onClick={handleJoin}
+            disabled={joining}
+          >
+            {joining ? "Wird beigetreten..." : "JETZT ANMELDEN"}
+          </button>
+        </div>
+      )}
+
 
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Users className="w-6 h-6" /> Teilnehmer</h2>

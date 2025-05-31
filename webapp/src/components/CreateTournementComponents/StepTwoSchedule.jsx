@@ -105,7 +105,6 @@ useEffect(() => {
           <option value="">Bitte wählen…</option>
           <option value="singleElimination">K.O.-System</option>
           <option value="roundRobin">Jeder gegen Jeden</option>
-          <option value="groupPhase">Gruppenphase</option>
         </select>
       </div>
       

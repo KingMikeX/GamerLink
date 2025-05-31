@@ -116,12 +116,25 @@ export default function TournamentList() {
             Turniere entdecken
           </h1>
 
-          <a
-            href="/tournements/create"
+          <button
+            onClick={async () => {
+              const token = localStorage.getItem("token");
+              const res = await fetch("http://localhost:8000/profile/me", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const user = await res.json();
+
+              if (user.role === "Admin" || user.role === "Subscriber") {
+                window.location.href = "/tournements/create";
+              } else {
+                alert("Nur Admins oder Abonnenten dürfen Turniere erstellen.");
+              }
+            }}
             className="bg-[#dd17c9] hover:bg-pink-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
           >
             Turnier erstellen
-          </a>
+          </button>
+
         </div>
 
         {selectedTournament && (

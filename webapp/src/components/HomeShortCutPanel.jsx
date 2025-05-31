@@ -117,7 +117,20 @@ const [trendingGames, setTrendingGames] = useState([]);
 
         <div className="mr-10 ml-10">
           <button
-            onClick={() => router.push('/tournements/create')}
+            onClick={async () => {
+              const token = localStorage.getItem("token");
+              const res = await fetch("http://localhost:8000/profile/me", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const user = await res.json();
+
+              if (user.role === "Admin" || user.role === "Subscriber") {
+                router.push('/tournements/create');
+              } else {
+                alert("Nur Admins oder Abonnenten dürfen Turniere erstellen.");
+              }
+            }}
+
             className="bg-gradient-to-r hover:bg-gradient-to-r from-pink-600 hover:from-pink-700 to-purple-600 hover:to-purple-500 shadow-md hover:shadow-inner hover:shadow-pink-700 mt-6 py-3 rounded-xl w-full text-white transition-all"
           >
             <span className="font-semibold font-stretch-150%">Turnier erstellen</span>
