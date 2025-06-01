@@ -1,22 +1,23 @@
-
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/Backend/(.*)"
-    }
-  ],
   "builds": [
     {
-      "src": "webapp/package.json",
-      "use": "@vercel/next",
-      "config": { "outputDirectory": "webapp" }
+      "src": "webapp/next.config.js",
+      "use": "@vercel/next"
     },
     {
-      "src": "Backend/main.py", 
-      "use": "@vercel/python",
-      "config": { "outputDirectory": "Backend" }
+      "src": "Backend/src/main.py",
+      "use": "@vercel/python"
     }
   ],
-  "installCommand": "npm install && pip install -r backend/requirements.txt"
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/Backend/src/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/webapp/$1"
+    }
+  ],
+  "installCommand": "npm install && pip install -r Backend/requirements.txt"
 }
