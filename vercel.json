@@ -18,5 +18,5 @@
       "config": { "outputDirectory": "Backend" }
     }
   ],
-  "installCommand": "npm install --prefix webapp && pip install -r Backend/requirements.txt"
+  "installCommand": "npm install --prefix webapp && pip install -r backend/requirements.txt --verbose"
 }
