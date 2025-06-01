@@ -52,18 +52,19 @@ export default function SendFriendRequest() {
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md w-full max-w-md">
-      <h2 className="text-white text-lg mb-2 font-semibold">Freund hinzufügen</h2>
+
+    <div className="bg-[#121428] p-4 rounded-lg shadow-md w-full max-w-md">
+      
       <input
         type="text"
         placeholder="Benutzernamen eingeben"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        className="w-full p-2 mb-2 rounded bg-gray-700 text-white"
+        className="w-full p-2 mb-2 rounded bg-[#252641] text-white"
       />
       <button
         onClick={sendRequest}
-        className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold rounded-xl transition-colors py-2 px-4 rounded w-full"
+        className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold rounded-xl transition-colors py-2 px-4 rounded w-full uppercase"
       >
         Anfrage senden
       </button>

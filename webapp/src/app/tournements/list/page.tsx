@@ -121,10 +121,6 @@ useEffect(() => {
 
       <div className="flex-1 px-10 py-8 overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Trophy className="w-7 h-7 text-white" />
-            Turniere entdecken
-          </h1>
 
           <button
             onClick={async () => {
@@ -140,7 +136,7 @@ useEffect(() => {
                 alert("Nur Admins oder Abonnenten dürfen Turniere erstellen.");
               }
             }}
-            className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold px-5 py-2 rounded-xl transition-colors"
+            className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold px-5 py-2 rounded-xl transition-colors uppercase"
           >
             Turnier erstellen
           </button>
@@ -148,14 +144,19 @@ useEffect(() => {
         </div>
 
         {selectedTournament && (
-          <div className="mb-10 bg-[#1A1A3D] rounded-2xl shadow-xl p-6 md:flex gap-6">
-            <div className="bg-gray-300 w-full md:max-w-sm h-64 rounded-xl" />
+          <div className="mb-10 bg-[#121428] rounded-2xl shadow-xl p-6 md:flex gap-6">
+            <div  />
+              <div className="bg-white w-full md:max-w-sm h-64 rounded-xl flex items-center justify-center">
+                <img src="/Symbol_Gamerlink.png" alt="Symbol_Gamerlink" className="w-20 h-20 object-contain" />
+              </div>
+
+              
             <div className="flex-1">
               <div className="bg-[#dd17c9] text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
                 FEATURED
               </div>
               <h2 className="text-2xl font-bold mb-2 uppercase tracking-wide">{selectedTournament.name}</h2>
-              <p className="text-sm text-gray-300 mb-4">{selectedTournament.description}</p>
+
               <div className="text-sm text-white grid grid-cols-2 gap-y-1 mb-4">
                 <p><span className="font-semibold">SPIEL:</span> {selectedTournament.game}</p>
                 <p><span className="font-semibold">START:</span> {new Date(selectedTournament.start_time).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}</p>
@@ -168,14 +169,14 @@ useEffect(() => {
               <div className="flex gap-3">
                 <button
                   onClick={() => handleJoin(selectedTournament.id)}
-                  className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-full text-white font-bold text-sm"
+                  className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-xl text-white font-bold text-sm"
                   disabled={joining}
                 >
                   {joining ? "Wird beigetreten..." : "JETZT ANMELDEN"}
                 </button>
                 <a
                   href={`/tournements/${selectedTournament.id}/details`}
-                  className="px-5 py-2 bg-[#2c2c4e] hover:bg-[#3b3b63] rounded-full text-white font-bold text-sm"
+                  className="px-5 py-2 bg-[#2c2c4e] hover:bg-[#3b3b63] rounded-xl text-white font-bold text-sm"
                 >
                   DETAILS ANSEHEN
                 </a>
@@ -193,7 +194,7 @@ useEffect(() => {
             {tournaments.map((t) => (
               <div
                 key={t.id}
-                className="bg-[#1A1A3D] rounded-2xl shadow-lg p-5 relative hover:scale-[1.02] transition-transform cursor-pointer"
+                className="bg-[#121428] rounded-2xl shadow-lg p-5 relative hover:scale-[1.02] transition-transform cursor-pointer"
                 onClick={() => fetchTournamentDetails(t.id)}
               >
                   {(() => {
@@ -201,7 +202,7 @@ useEffect(() => {
                     const now = new Date();
                     const isUpcoming = startTime > now;
                     const badgeText = isUpcoming ? "BALD" : "LIVE";
-                    const badgeColor = isUpcoming ? "bg-orange-400 text-black" : "bg-red-500 text-white";
+                    const badgeColor = isUpcoming ? "bg-orange-400 text-black font-semibold" : "bg-red-500 text-white font-semibold";
 
                     return (
                       <div className={`absolute top-4 right-4 ${badgeColor} text-xs font-bold px-3 py-1 rounded-full`}>
@@ -210,12 +211,15 @@ useEffect(() => {
                     );
                   })()}
 
-                <div className="bg-gray-700 h-32 w-full rounded-xl mb-4" />
-                <p className="text-xs text-[#FF4EF1] font-bold">{t.game}</p>
+                <div  />
+                  <div className="bg-white h-32 w-full rounded-xl mb-4 flex items-center justify-center">
+                    <img src="/Symbol_Gamerlink.png" alt="Symbol_Gamerlink" className="w-20 h-20 object-contain" />
+                  </div>
+                <p className="text-xs text-[#FF4EF1] font-semibold">{t.game}</p>
                 <h2 className="text-lg font-semibold">{t.name}</h2>
-                <p className="text-sm text-gray-300">{t.max_players} SPIELER</p>
-                <p className="text-sm text-gray-300">{t.niveau.toUpperCase()}</p>
-                <p className="text-sm text-[#39ff14] font-bold mt-2">
+                <p className="text-sm font-semibold text-gray-300">{t.max_players} SPIELER</p>
+                <p className="text-sm font-semibold text-gray-300">{t.niveau.toUpperCase()}</p>
+                <p className="text-sm font-semibold text-[#39ff14] font-bold mt-2">
                   Start: {new Date(t.start_time).toLocaleString("de-DE")}
                 </p>
               </div>

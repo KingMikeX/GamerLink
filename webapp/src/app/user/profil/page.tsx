@@ -277,36 +277,36 @@ export default function ProfilePage() {
 
 
         <section id="section-personal">
-          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PERSÖNLICHE INFORMATIONEN</h2>
+          <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4">PERSÖNLICHE INFORMATIONEN</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Benutzername</label>
+              <label className="text-sm font-semibold text-white mb-2">Benutzername</label>
               <input name="username" value={profile.username} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2  mr-70 rounded-lg" />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">E-Mail-Adresse</label>
+              <label className="text-sm font-semibold text-white mb-2">E-Mail-Adresse</label>
               <input name="email" value={profile.email} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 mr-70 rounded-md" />
             </div>
           </div>
           <div className="flex flex-col mb-4">
-            <label className="text-sm font-bold text-white">Über mich</label>
+            <label className="text-sm font-semibold text-white mb-2">Über mich</label>
             <textarea name="about" value={profile.about} onChange={handleChange} className="w-full bg-[#1A1C2D] p-4 rounded-md h-28" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Standort</label>
+              <label className="text-sm font-semibold text-white mb-2">Standort</label>
               <input name="location" value={profile.location} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 mr-70 rounded-md" />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Geburtsdatum</label>
+              <label className="text-sm font-semibold text-white mb-2">Geburtsdatum</label>
               <input name="birthdate" type="date" value={profile.birthdate} onChange={handleChange} className="bg-[#1A1C2D] mr-70 px-4 py-2 rounded-md" />
             </div>
           </div>
         </section>
         <section id="section-gaming">
-          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">GAMING-PROFIL</h2>
+          <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4">GAMING-PROFIL</h2>
           <div className="flex flex-col mb-2">
-            <label className="text-sm font-bold text-white">Lieblingsspiele</label>
+            <label className="text-sm font-semibold text-white mb-2">Lieblingsspiele</label>
             <div className="flex flex-wrap gap-2 mt-1">
               {profile.games.map((game, index) => (
                 <span key={index} className="bg-[#2A2C3E] px-3 py-1 rounded-full text-xs">
@@ -316,16 +316,16 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="flex flex-col gap-2 mb-6">
-            <label className="text-sm font-bold text-white">Neues Spiel</label>
+            <label className="text-sm font-semibold text-white mb-2">Neues Spiel</label>
             <div className="flex gap-2">
               <input name="newGame" value={profile.newGame} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md w-full mr-130" />
-              <button onClick={handleAddGame} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-md text-xs">HINZUFÜGEN</button>
+              <button onClick={handleAddGame} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-xl text-xs">HINZUFÜGEN</button>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Hauptplattform</label>
+              <label className="text-sm font-semibold text-white mb-2">Hauptplattform</label>
               <select name="platform" value={profile.platform} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md mr-70">
                 <option value="">Bitte wählen</option>
                 <option value="PC">PC</option>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
               </select>
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Spielstil</label>
+              <label className="text-sm font-semibold text-white mb-2">Spielstil</label>
               <select name="playstyle" value={profile.playstyle} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md mr-70">
                 <option value="">Bitte wählen</option>
                 <option value="COMPETETIV">COMPETETIV</option>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex flex-col gap-2 mb-4">
-            <label className="text-sm font-bold text-white">Sprachen</label>
+            <label className="text-sm font-semibold text-white mb-2">Sprachen</label>
             <div className="flex gap-2 flex-wrap mt-1">
               {profile.languages.map((lang, index) => (
                 <span key={index} className="bg-[#2A2C3E] px-3 py-1 rounded-full text-xs">
@@ -355,38 +355,38 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-white">Neue Sprache hinzufügen</label>
+            <label className="text-sm font-semibold text-white mb-2">Neue Sprache hinzufügen</label>
             <div className="flex gap-2">
               <input name="newLanguage" value={profile.newLanguage} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md w-full mr-130" />
-              <button onClick={handleAddLanguage} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-md text-xs ml">HINZUFÜGEN</button>
+              <button onClick={handleAddLanguage} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-xl text-xs ml">HINZUFÜGEN</button>
             </div>
           </div>
         </section>
 
         <section id="section-social">
-          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">SOCIAL MEDIA & GAMING ACCOUNT</h2>
+          <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4">SOCIAL MEDIA & GAMING ACCOUNT</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Discord</label>
+              <label className="text-sm font-semibold text-white mb-2">Discord</label>
               <input name="discord" value={profile.discord} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md" />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Steam</label>
+              <label className="text-sm font-semibold text-white mb-2">Steam</label>
               <input name="steam" value={profile.steam} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md" />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">Twitch</label>
+              <label className="text-sm font-semibold text-white mb-2">Twitch</label>
               <input name="twitch" value={profile.twitch} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md" />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-bold text-white">YouTube</label>
+              <label className="text-sm font-semibold text-white mb-2">YouTube</label>
               <input name="youtube" value={profile.youtube} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md" />
             </div>
           </div>
         </section>
 
         <section id="section-privacy">
-          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PRIVATSPHÄRE-EINSTELLUNGEN</h2>
+          <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4">PRIVATSPHÄRE-EINSTELLUNGEN</h2>
           <div className="space-y-4">
             <label className="flex items-center space-x-3">
               <input type="checkbox" checked={profile.privacy.public} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, public: !p.privacy.public } }))} className="accent-[#dd17c9] w-5 h-5" />
@@ -410,11 +410,11 @@ export default function ProfilePage() {
         <button
         type="button"
         onClick={() => router.push("/home")}
-        className="w-full sm:w-auto px-6 py-2 rounded-md bg-[#1F213A] hover:bg-[#2E314A] text-white font-semibold transition-colors"
+        className="w-full sm:w-auto px-6 py-2 rounded-xl bg-[#1F213A] hover:bg-[#2E314A] text-white font-semibold transition-colors"
       >
         ABBRECHEN
       </button>
-        <button onClick={handleSave} className="px-6 py-2 font-semibold rounded-md bg-[#dd17c9] text-white hover:bg-[#aa0d9d]">ÄNDERUNGEN SPEICHERN</button>
+        <button onClick={handleSave} className="px-6 py-2 font-semibold rounded-xl bg-[#dd17c9] text-white hover:bg-[#aa0d9d]">ÄNDERUNGEN SPEICHERN</button>
 
 </section>
       </main>

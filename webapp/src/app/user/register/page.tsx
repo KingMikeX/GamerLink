@@ -75,7 +75,7 @@ export default function Register() {
             placeholder="Benutzername"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full bg-[#1E2035] text-white placeholder-gray-400 px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
+            className="w-full bg-[#1E2035] text-white font-semibold placeholder-white px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
             required
           />
           <input
@@ -83,7 +83,7 @@ export default function Register() {
             placeholder="E-Mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#1E2035] text-white placeholder-gray-400 px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
+            className="w-full bg-[#1E2035] text-white font-semibold placeholder-white px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
             required
           />
           <input
@@ -91,13 +91,13 @@ export default function Register() {
             placeholder="Passwort (min. 6 Zeichen)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#1E2035] text-white placeholder-gray-400 px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
+            className="w-full bg-[#1E2035] text-white placeholder-white font-semibold px-4 py-2 rounded-md border border-[#2d2f46] focus:outline-none focus:ring-2 focus:ring-[#D047FF]"
             required
           />
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          <div className="text-sm text-center text-gray-300">
+          <div className="text-sm text-center font-semibold text-gray-300">
             Du hast schon ein Konto?{" "}
             <Link href="/user/login" className="text-[#da4ecc] hover:underline font-medium">
               Login
@@ -115,7 +115,7 @@ export default function Register() {
         </form>
 
         {/* Disclaimer */}
-        <p className="text-xs text-center text-gray-400 mt-4">
+        <p className="text-xs text-center font-semibold text-gray-400 mt-4">
           Ich stimme den{" "}
           <a href="#" className="underline">Nutzungsbedingungen</a> und der{" "}
           <a href="#" className="underline">Datenschutzerklärung</a> zu.

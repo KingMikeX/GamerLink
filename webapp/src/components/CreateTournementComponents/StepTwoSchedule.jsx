@@ -90,13 +90,13 @@ useEffect(() => {
   
   return (
     <div className="bg-[#121428] mx-auto p-6 rounded-lg max-w-3xl">
-      <h2 className="mb-6 font-semibold text-xl uppercase">Zeitplan</h2>
+      <h2 className="mb-6 text-[#FF4EF1] font-semibold border-b border-[#2E314A] text-xl uppercase">Zeitplan</h2>
 
       {/* Ligasystem Auswahl */}
       <div className="mb-6">
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Ligasystem</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Ligasystem</h4>
         <select
-          className="w-full bg-[#131320] text-white p-3 rounded-lg"
+          className="w-full bg-[#252641] text-white p-3 rounded-lg"
           value={formData.tournamentMode || ''}
           onChange={(e) =>
             updateFormData({ ...formData, tournamentMode: e.target.value })
@@ -110,17 +110,16 @@ useEffect(() => {
       
       {/* Main Tournament */}
       <div className="mb-8">
-        <h3 className="mb-4 font-medium text-sm uppercase">Turnier-Zeitplan <span className="text-gray-400">(Hauptturnier)</span></h3>
         
         <div className="gap-6 grid grid-cols-2 mb-6">
       {/* Start Date */}
       <div>
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Startdatum</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Startdatum</h4>
         <div className="flex items-center">
           <div className="flex-1">
             <input
               type="date"
-              className="w-full bg-[#131320] text-white p-3 rounded-lg" // <<< appearance-none entfernt
+              className="w-full bg-[#252641] text-white p-3 rounded-lg" // <<< appearance-none entfernt
               value={formData.startDate || ''}
               onChange={(e) => updateFormData({ ...formData, startDate: e.target.value })}
             />
@@ -132,16 +131,16 @@ useEffect(() => {
                 
       {/* Start Time */}
       <div>
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Startzeit</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Startzeit</h4>
         <div className="flex items-center">
           <div className="flex-1 relative">
             <input
               type="time"
-              className="w-full bg-[#131320] text-white p-3 pr-10 rounded-lg appearance-none"
+              className="w-full bg-[#252641] text-white p-3 pr-10 rounded-lg appearance-none"
               value={formData.startTime || ''}
               onChange={(e) => updateFormData({ ...formData, startTime: e.target.value })}
             />
-            <span className="absolute right-3 top-3.5 text-gray-400 pointer-events-none">🕒</span>
+            <span className="absolute right-3 top-3.5 text-white pointer-events-none">🕒</span>
           </div>
         </div>
       </div>
@@ -149,10 +148,10 @@ useEffect(() => {
         
       {/* Time Zone */}
       <div className="mb-6">
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Zeitzone</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Zeitzone</h4>
         <div className="flex items-center">
           <select
-            className="flex-1 bg-[#131320] text-white p-3 rounded-lg"
+            className="flex-1 bg-[#252641] text-white p-3 rounded-lg"
             value={formData.timezone || 'CET'}
             onChange={(e) => updateFormData({ ...formData, timezone: e.target.value })}
           >
@@ -180,7 +179,7 @@ useEffect(() => {
             })}
           />
           <label htmlFor="autoRounds" className="flex items-center cursor-pointer">
-            <div className={`w-10 h-5 flex items-center rounded-full p-1 ${formData.autoRounds ? 'bg-purple-600' : 'bg-gray-700'}`}>
+            <div className={`w-10 h-5 flex items-center rounded-full p-1 ${formData.autoRounds ? 'bg-[#dd17c9]' : 'bg-gray-700'}`}>
               <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${formData.autoRounds ? 'translate-x-5' : ''}`}></div>
             </div>
             <span className="ml-3 text-sm">AUTOMATISCHE RUNDENERSTELLUNG</span>
@@ -190,11 +189,11 @@ useEffect(() => {
 
       {/* Match Duration */}
       <div className="mb-6">
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Match-Dauer (Minuten)</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Match-Dauer (Minuten)</h4>
         <input
           type="number"
           min={1}
-          className="w-full bg-[#131320] text-white p-3 rounded-lg"
+          className="w-full bg-[#252641] text-white p-3 rounded-lg"
           placeholder="30"
           value={formData.matchDuration || ''}
           onChange={(e) => updateFormData({ ...formData, matchDuration: parseInt(e.target.value) || '' })}
@@ -203,11 +202,11 @@ useEffect(() => {
 
       {/* Break Between Rounds */}
       <div className="mb-6">
-        <h4 className="mb-2 font-medium text-gray-400 text-xs uppercase">Pause zwischen Runden (Minuten)</h4>
+        <h4 className="mb-2 font-semibold text-white text-xs uppercase">Pause zwischen Runden (Minuten)</h4>
         <input
           type="number"
           min={0}
-          className="w-full bg-[#131320] text-white p-3 rounded-lg"
+          className="w-full bg-[#252641] text-white p-3 rounded-lg"
           placeholder="15"
           value={formData.breakDuration || ''}
           onChange={(e) => updateFormData({ ...formData, breakDuration: parseInt(e.target.value) || '' })}
@@ -217,21 +216,25 @@ useEffect(() => {
       
       {/* Round Schedule */}
       <div className="mb-8">
-        <h3 className="mb-4 font-medium text-sm uppercase">Runden-Zeitplan</h3>
+        <h3 className="mb-6 text-[#FF4EF1] font-semibold border-b border-[#2E314A] text-xl uppercase">Runden-Zeitplan</h3>
         
       {/* Dynamische Rundenanzeige */}
+      <div className="space-y-6">
       {rounds.map((round, index) => (
-        <div key={index} className="bg-[#131320] rounded-lg overflow-hidden">
-          <div className="flex justify-between items-center bg-purple-600 px-4 py-2">
-            <h4 className="font-medium">{round.name}</h4>
-            <div className="text-sm">{formData.startDate}, {round.time}</div>
+        <div key={index} className="bg-[#252641] rounded-lg overflow-hidden text-sm">
+          <div className="flex justify-between items-center bg-[#dd17c9] px-4 py-3">
+            <h4 className="font-semibold uppercase">{round.name}</h4>
+            <div className="font-semibold">{formData.startDate}, {round.time}</div>
           </div>
-          <div className="flex justify-between items-center px-4 py-3">
+
+          <div className="font-semibold flex justify-between items-center px-4 py-3">
             <div>Matches: {round.matches}</div>
             <div>Format: {round.format}</div>
           </div>
         </div>
+
       ))}
+      </div>
       </div>
 
 
@@ -242,13 +245,13 @@ useEffect(() => {
       <div className="flex justify-between">
         <button
           onClick={onBack}
-          className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg font-medium text-white"
+          className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg font-semibold text-white"
         >
           ZURÜCK
         </button>
         <button
           onClick={onNext}
-          className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg font-medium text-white"
+          className="bg-[#dd17c9] hover:bg-[#aa0d9d] px-6 py-2 rounded-lg font-semibold text-white"
         >
           WEITER
         </button>

@@ -18,7 +18,7 @@ export default function CreateTournament() {
   // Basic Info (Step 1)
   title: '',
   game: '',
-  teamSize: '',
+  teamSize: "",
   maxTeams: 2,
   scoringSystem: 'STANDARD',
   registrationStart: '15.04.2025',
@@ -138,7 +138,7 @@ export default function CreateTournament() {
   return (
     <Layout>
       <div className="mb-8">
-        <h1 className="mb-4 font-bold text-2xl">Turnier erstellen</h1>
+        <h1 className="mb-4 font-semibold text-2xl"></h1>
         <ProgressBar currentStep={currentStep} />
         
         {currentStep === 1 && (

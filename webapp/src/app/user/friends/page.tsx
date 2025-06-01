@@ -116,26 +116,28 @@ export default function FriendsPage() {
       <FullSideBar which_Page={selectedPage[3]} />
 
       <div className="flex-1 p-10 text-white">
-        <h1 className="text-3xl font-bold mb-6">Freunde</h1>
+
 
         {loading ? (
           <p>Lade Freundesdaten...</p>
         ) : (
           <>
+            
             <div className="mb-8">
+              <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">Freund hinzufügen</h2>
               <SendFriendRequest />
             </div>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-3">Eingehende Anfragen</h2>
+              <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">Eingehende Anfragen</h2>
               {incoming.length === 0 ? <p>Keine Anfragen.</p> : (
                 <ul className="space-y-3">
                   {incoming.map(req => (
-                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
+                    <li key={req.id} className="bg-[#121428] p-4 rounded-xl flex justify-between items-center">
                       <span>{req.sender_name}</span>
                       <div className="space-x-2">
-                        <button onClick={() => handleAccept(req.id)} className="bg-green-600 hover:bg-green-800 rounded-xl font-semibold px-3 py-1 rounded">Annehmen</button>
-                        <button onClick={() => handleDecline(req.id)} className="bg-red-600 hover:bg-red-800 rounded-xl font-semibold px-3 py-1 rounded">Ablehnen</button>
+                        <button onClick={() => handleAccept(req.id)} className="bg-green-600 hover:bg-green-800 rounded-xl font-semibold px-3 py-1 rounded uppercase">Annehmen</button>
+                        <button onClick={() => handleDecline(req.id)} className="bg-red-600 hover:bg-red-800 rounded-xl font-semibold px-3 py-1 rounded uppercase">Ablehnen</button>
                       </div>
                     </li>
                   ))}
@@ -144,11 +146,11 @@ export default function FriendsPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-3">Gesendete Anfragen</h2>
+              <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">Gesendete Anfragen</h2>
               {sent.length === 0 ? <p>Keine gesendeten Anfragen.</p> : (
                 <ul className="space-y-3">
                   {sent.map(req => (
-                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl">
+                    <li key={req.id} className="bg-[#121428] p-4 rounded-xl">
                       <span>an {req.receiver_name} gesendet</span>
                     </li>
                   ))}
@@ -157,11 +159,11 @@ export default function FriendsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">Akzeptierte Freunde</h2>
+              <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">Akzeptierte Freunde</h2>
               {accepted.length === 0 ? <p>Keine Freunde.</p> : (
                 <ul className="space-y-3">
                   {accepted.map(req => (
-                    <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
+                    <li key={req.id} className="bg-[#121428] p-4 rounded-xl flex justify-between items-center">
                       <span>{req.receiver_name}</span>
                       <button
                         onClick={async () => {
@@ -172,7 +174,7 @@ export default function FriendsPage() {
                           });
                           location.reload(); // aktualisieren
                         }}
-                        className="bg-red-600 hover:bg-red-800 rounded-xl text-white font-semibold px-3 py-1 rounded"
+                        className="bg-red-600 hover:bg-red-800 rounded-xl text-white font-semibold px-3 py-1 rounded uppercase"
                       >
                         Entfernen
                       </button>

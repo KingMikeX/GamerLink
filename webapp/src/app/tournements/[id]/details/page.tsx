@@ -270,38 +270,37 @@ useEffect(() => {
 const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isAdmin;
 
   return (
-    <div className="flex min-h-screen bg-[#252641] text-white">
+    <div className="flex min-h-screen bg-[#252641] text-white font-semibold">
       <FullSideBar which_Page="/tournaments/list" />
       <div className="flex-1 p-10 overflow-y-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold flex items-center gap-3 mb-4">
-            <Trophy className="w-8 h-8" /> {tournament.name}
+          <h1 className="text-white text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">
+           {tournament.name}
           </h1>
-          <p className="text-gray-400 text-lg mb-2">{tournament.description}</p>
-          <div className="text-sm text-gray-300 grid grid-cols-2 gap-y-1 mb-4">
-            <p><strong>Spiel:</strong> {tournament.game}</p>
-            <p><strong>Start:</strong> {new Date(tournament.start_time).toLocaleString("de-DE")}</p>
-            <p><strong>Max. Spieler:</strong> {tournament.max_players}</p>
-            <p><strong>Teamgröße:</strong> {tournament.teamgroeße}</p>
-            <p><strong>Teamanzahl:</strong> {tournament.teamanzahl}</p>
-            <p><strong>Erstellt von:</strong> {tournament.created_by_username}</p>
-            <p><strong>Dauer:</strong> {tournament.duration_minutes} Minuten</p>
-            <p><strong>Gebühr:</strong> {tournament.entry_fee} €</p>
-            <p><strong>Zeitzone:</strong> {tournament.timezone}</p>
-            <p><strong>Check-In:</strong> {tournament.check_in_required ? "Ja" : "Nein"}</p>
-            <p><strong>Regeln:</strong> {tournament.rules}</p>
-            <p><strong>Modus:</strong> {tournament.mode}</p>
-            <p><strong>Scoring:</strong> {tournament.scoring_system}</p>
-            <p><strong>Registrierung:</strong> {new Date(tournament.registration_start).toLocaleString("de-DE")} – {new Date(tournament.registration_end).toLocaleString("de-DE")}</p>
-            <p><strong>Sichtbarkeit:</strong> {tournament.is_public ? "Öffentlich" : "Privat"}</p>
-            <p><strong>Nur mit Einladung:</strong> {tournament.invite_only ? "Ja" : "Nein"}</p>
+          <div className="text-m text-white grid grid-cols-2 gap-y-3 mb-4">
+            <p>Spiel: {tournament.game}</p>
+            <p>Start: {new Date(tournament.start_time).toLocaleString("de-DE")}</p>
+            <p>Max. Spieler:{tournament.max_players}</p>
+            <p>Teamgröße: {tournament.teamgroeße}</p>
+            <p>Teamanzahl: {tournament.teamanzahl}</p>
+            <p>Erstellt von: {tournament.created_by_username}</p>
+            <p>Dauer: {tournament.duration_minutes} Minuten</p>
+            <p>Gebühr: {tournament.entry_fee} €</p>
+            <p>Zeitzone: {tournament.timezone}</p>
+            <p>Check-In: {tournament.check_in_required ? "Ja" : "Nein"}</p>
+            <p>Regeln: {tournament.rules}</p>
+            <p>Modus: {tournament.mode}</p>
+            <p>Scoring: {tournament.scoring_system}</p>
+            <p>Registrierung: {new Date(tournament.registration_start).toLocaleString("de-DE")} – {new Date(tournament.registration_end).toLocaleString("de-DE")}</p>
+            <p>Sichtbarkeit: {tournament.is_public ? "Öffentlich" : "Privat"}</p>
+            <p>Nur mit Einladung: {tournament.invite_only ? "Ja" : "Nein"}</p>
           </div>
         </div>
 
         {!isParticipant && (
         <div className="mb-8">
           <button
-            className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-full text-white font-bold text-sm"
+            className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-xl text-white font-semibold text-sm"
             onClick={handleJoin}
             disabled={joining}
           >
@@ -312,15 +311,15 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
 
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Users className="w-6 h-6" /> Teilnehmer</h2>
+          <h2 className= "text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase"> Teilnehmer</h2>
           {participants.length > 0 ? (
             <ul>
               {participants.map((p) => (
-                <li key={p.user_id} className="text-gray-300 mb-2">{p.username}</li>
+                <li key={p.user_id} className="text-white mb-2">{p.username}</li>
               ))}
             </ul>
           ) : (
-            <p className="text-gray-500">Keine Teilnehmer gefunden.</p>
+            <p className="text-white">Keine Teilnehmer gefunden.</p>
           )}
         </div>
 
@@ -328,7 +327,7 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
           {isOwnerOrAdmin && (
             <div className="flex mb-2">
               <button
-                className="bg-purple-600 px-4 py-2 rounded text-white text-sm hover:bg-purple-700"
+                className="px-4 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-xl text-white font-semibold text-sm uppercase"
                 onClick={saveAllTeamNames}
               >
                 Alle Teamnamen speichern
@@ -337,7 +336,7 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
           )}
 
 
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Flag className="w-6 h-6" /> Matches</h2>
+          <h2 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 pt-6 uppercase"> Matches</h2>
           {matches.length > 0 ? (
             <ul>
 
@@ -356,11 +355,11 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
         const isDraw = m.is_played && !m.winner_team_id;
 
         return (
-          <div key={m.id} className="text-gray-300 mb-4 border-b pb-2">
+          <div key={m.id} className="text-white mb-4 border-b  font-semibold pb-2">
             <p className="mb-1">
-              <span className="font-semibold">Matchday {m.matchday}:</span>{" "}
+              <span className="font-semibold uppercase">Matchday {m.matchday}:</span>{" "}
               <input
-                className="bg-gray-700 border border-gray-500 px-2 py-1 rounded mr-1 text-white"
+                className="bg-[#121428]  px-2 py-1 rounded mr-1 text-white"
                 value={names.teamA}
                 onChange={(e) => handleTeamNameChange(m.id, "A", e.target.value)}
                 placeholder="Team A"
@@ -368,35 +367,35 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
               />{" "}
               vs.{" "}
               <input
-                className="bg-gray-700 border border-gray-500 px-2 py-1 rounded mr-1 text-white"
+                className="bg-[#121428] px-2 py-1 rounded mr-1 text-white"
                 value={names.teamB}
                 onChange={(e) => handleTeamNameChange(m.id, "B", e.target.value)}
                 placeholder="Team B"
                 disabled={m.is_played || !isOwnerOrAdmin}
               />
               {m.is_played ? (
-                <span className="ml-2 text-green-400 font-bold">(Beendet)</span>
+                <span className="ml-2 text-[#39ff14] font-semibold">(Beendet)</span>
               ) : (
-                <span className="ml-2 text-yellow-400">(Ausstehend)</span>
+                <span className="ml-2 text-[#FF4EF1]">(Ausstehend)</span>
               )}
             </p>
 
             {!m.is_played && isOwnerOrAdmin ? (
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-3 mt-4 ">
                 <button
-                  className="bg-green-600 px-3 py-1 rounded text-white text-sm hover:bg-green-700"
+                  className="bg-orange-600 px-3 py-1 rounded-xl text-white text-sm hover:bg-orange-700 uppercase"
                   onClick={() => submitResult(m.id, names.teamA)}
                 >
                   Sieger: {names.teamA}
                 </button>
                 <button
-                  className="bg-blue-600 px-3 py-1 rounded text-white text-sm hover:bg-blue-700"
+                  className="bg-[#dd17c9] px-3 py-1 rounded-xl text-white text-sm hover:bg-[#aa0d9d] uppercase"
                   onClick={() => submitResult(m.id, names.teamB)}
                 >
                   Sieger: {names.teamB}
                 </button>
                 <button
-                  className="bg-gray-600 px-3 py-1 rounded text-white text-sm hover:bg-gray-700"
+                  className="bg-gray-600 px-3 py-1 rounded-xl text-white text-sm hover:bg-gray-700 uppercase"
                   onClick={() => submitResult(m.id, null)}
                 >
                   Unentschieden
@@ -407,7 +406,7 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
                 {isDraw ? (
                   <span className="text-gray-400 italic">Unentschieden</span>
                 ) : (
-                <span className="text-green-400 font-bold">
+                <span className="text-[#39ff14] font-semibold">
                   Sieger: {winnerName}
                 </span>
 

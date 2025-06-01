@@ -7,11 +7,11 @@ const Layout = ({ children }) => {
   const router = useRouter();
   
   return (
-    <div className="flex bg-[#161830] h-screen text-white">
+    <div className="flex bg-[#252641] h-screen text-white">
       {/* Sidebar */}
       <FullSideBar which_Page={2} />
       {/* Page Content */}
-      <div className="flex-1 p-4 overflow-auto">
+      <div className="flex-1 p-4 overflow-auto font-semibold">
         {children}
       </div>
     </div>

@@ -76,7 +76,7 @@ const [trendingGames, setTrendingGames] = useState([]);
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="flex font-semibold items-center text-white text-lg">
-            <Trophy size={16} className="mr-2 text-pink-500 font-semibold" />
+            <Trophy size={16} className="mr-2 text-[#FF4EF1] font-semibold" />
             Anstehende Turniere
           </h2>
         </div>
@@ -94,7 +94,7 @@ const [trendingGames, setTrendingGames] = useState([]);
                   <div
                     key={index}
                     onClick={() => router.push(`/tournements/${t.id}/details`)}
-                    className="group bg-[#1A1A3D] hover:bg-[#2a2b4c] p-4 border border-indigo-700/30 hover:border-purple-500 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
+                    className="group bg-[#252641] hover:bg-[#2a2b4c] p-4 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
                   >
                 <div className="mb-1">
                   <h3 className="font-semibold text-white group-hover:text-pink-400 text-sm truncate">
@@ -133,7 +133,7 @@ const [trendingGames, setTrendingGames] = useState([]);
 
             className=" bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold mt-4 py-3 rounded-xl w-full transition-colors">
           
-            <span className="font-semibold font-stretch-150%">Turnier erstellen</span>
+            <span className="font-semibold font-stretch-150% uppercase">Turnier erstellen</span>
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ const [trendingGames, setTrendingGames] = useState([]);
           {trendingGames.map((game, index) => (
             <div
               key={index}
-              className="group flex items-center bg-[#1A1A3D] p-3 border border-indigo-800/30 hover:border-indigo-700/50 rounded-xl transition-all cursor-pointer"
+              className="group flex items-center bg-[#252641] p-3 rounded-xl transition-all cursor-pointer"
             >
               <div className="bg-white rounded-lg w-12 h-12 flex items-center justify-center overflow-hidden">
                 <img src="/Symbol_Gamerlink.png" alt="Symbol_Gamerlink" className="w-8 h-8 object-contain" />

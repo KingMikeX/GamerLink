@@ -71,7 +71,7 @@ export default function SubscribePage() {
     <div className="flex min-h-screen bg-[#252641] text-white">
       <FullSideBar which_Page="/user/subscribe" />
       <div className="flex-1 px-10 py-10">
-        <h1 className="text-4xl font-bold mb-6">Dein Abo-Status</h1>
+        <h1 className="text-[#FF4EF1] text-xl font-semibold border-b border-[#2E314A] pb-2 mb-4 uppercase">Dein Abo-Status</h1>
 
         {loading ? (
           <p>Lade deine Rolle...</p>
@@ -82,20 +82,20 @@ export default function SubscribePage() {
               <span className="font-semibold text-[#FF4EF1]">{role}</span>
             </p>
 
-            <p className="text-gray-300 mb-6">
+            <p className="text-gray-300 mb-6 ">
               In der Anfangsphase ist das <strong>Subscriben</strong> kostenlos!
               Unterstütze unser Projekt und erhalte exklusive Features.
             </p>
 
             <div className="flex gap-4">
               <button
-                className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white px-6 py-2 rounded-xl font-semibold"
+                className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white px-6 py-2 rounded-xl font-semibold uppercase"
                 onClick={handleSubscribe}
               >
                 Subscribe
               </button>
               <button
-                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-xl font-semibold"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-xl font-semibold uppercase"
                 onClick={handleUnsubscribe}
               >
                 Unsubscribe

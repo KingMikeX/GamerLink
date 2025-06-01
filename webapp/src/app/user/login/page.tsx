@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Eye, EyeOff } from 'lucide-react';
+
 
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -87,7 +89,7 @@ export default function Login() {
             placeholder="Email"
             value={email}
             onChange={handleEmailChange}
-            className={`w-full bg-[#1E2035] text-white placeholder-gray-400 px-4 py-2 rounded-md border ${
+            className={`w-full bg-[#1E2035] font-semibold text-white placeholder-white px-4 py-2 rounded-md border ${
               emailError ? "border-red-500" : "border-[#2d2f46]"
             } focus:outline-none focus:ring-2 focus:ring-[#D047FF]`}
             required
@@ -100,7 +102,7 @@ export default function Login() {
               placeholder="Passwort"
               value={password}
               onChange={handlePasswordChange}
-              className={`w-full bg-[#1E2035] text-white placeholder-gray-400 px-4 py-2 pr-10 rounded-md border ${
+              className={`w-full bg-[#1E2035] text-white font-semibold placeholder-white px-4 py-2 pr-10 rounded-md border ${
                 passwordError ? "border-red-500" : "border-[#2d2f46]"
               } focus:outline-none focus:ring-2 focus:ring-[#D047FF]`}
               required
@@ -108,15 +110,16 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
             >
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+
             </button>
           </div>
           {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
           {error && <p className="text-red-500 text-center text-sm">{error}</p>}
 
-          <div className="text-sm text-center text-gray-300">
+          <div className="text-sm text-center font-semibold text-gray-300">
             Noch keinen Account?{" "}
             <Link href="/user/register" className="text-[#da4ecc] hover:underline font-medium">
               Registrieren
@@ -133,10 +136,10 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="text-xs text-center text-gray-400 mt-4">
+        <p className="text-xs font-semibold text-center text-gray-400 mt-4">
           Ich stimme den{" "}
-          <a href="#" className="underline text-[#text-gray-400]">Nutzungsbedingungen</a> und der{" "}
-          <a href="#" className="underline text-[#text-gray-400]">Datenschutzerklärung</a> zu.
+          <a href="#" className="underline font-semibold text-[#text-gray-400]">Nutzungsbedingungen</a> und der{" "}
+          <a href="#" className="underline font-semibold text-[#text-gray-400]">Datenschutzerklärung</a> zu.
         </p>
       </div>
     </div>
