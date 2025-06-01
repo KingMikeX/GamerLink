@@ -31,4 +31,3 @@ Schritte Zum Starten:
         > fastapi dev main.py
 
 Fals was schreibt mich an, wenn wir nicht schon alle online sind.   
-hallo test
