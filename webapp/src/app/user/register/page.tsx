@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Console } from "console";
 
 export default function Register() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function Register() {
       }
   
       const data = await res.json();
+      console.log("angekommen");
   
       // ✅ HIER: Token speichern!
       localStorage.setItem("token", data.access_token);
