@@ -30,4 +30,4 @@ Schritte Zum Starten:
         > cd ../Backend
         > fastapi dev main.py
 
-Fals was schreibt mich an, wenn wir nicht schon alle online sind.   
+Fals was schreibt mich an, wenn wir nicht schon alle online sind.   Chat gpt
