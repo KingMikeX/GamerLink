@@ -49,11 +49,14 @@ def register_user(user_data: UserCreate, db: Session):
     )
     db.add(new_profile)
     db.commit()
+    token = create_access_token({"sub": str(new_user.id)})
 
     return {
         "id": str(new_user.id),
         "username": new_user.username,
-        "email": new_user.email
+        "email": new_user.email,
+        "access_token": token,
+        "token_type": "bearer"
     }
 
 

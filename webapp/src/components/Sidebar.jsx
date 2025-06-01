@@ -26,11 +26,11 @@ export function SidebarItem({ icon, text, active, onClick, selected }) {
     return (
       <li
         className={`relative flex items-center py-2 px-3 my-1 font-mono rounded-3xl cursor-pointer
-                    transition-colors delay-75 group bg-[#252641] text-[#DA4ECC]`}
+                    transition-colors delay-75 group bg-[#252641] text-[#FF4EF1]`}
                     onClick={onClick}>
         {icon}
         <span
-          className={`overflow-hidden transition-all text-[#DA4ECC] ${ expanded ? "w-52 ml-3" : "w-0" }`}>
+          className={`overflow-hidden font-semibold transition-all text-[#FF4EF1] ${ expanded ? "w-52 ml-3" : "w-0" }`}>
           {text}
         </span>
       </li>

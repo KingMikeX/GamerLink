@@ -1,68 +1,112 @@
-"use client"
+'use client';
 
-import React from 'react';
-import Post from '@/components/Post';
+import React, { useEffect, useState } from 'react';
 import FullSideBar from '@/components/FullSideBar';
 import HomeShortCutPanel from '@/components/HomeShortCutPanel';
-import { Trophy, Users, ChevronRight, Gamepad2, Swords, Zap } from 'lucide-react';
+import SimplePost from '@/components/SimplePost';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const [joinedTournaments, setJoinedTournaments] = useState<any[]>([]);
+  const [createdTournaments, setCreatedTournaments] = useState<any[]>([]);
+  const [friendActivities, setFriendActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const trendingGames = [
-    { name: 'VALORANT', category: 'TAKTISCHER SHOOTER', players: '120k online' },
-    { name: 'LEAGUE OF LEGENDS', category: 'MOBA', players: '320k online' }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [joinedRes, createdRes, profileRes, friendRes] = await Promise.all([
+          fetch("http://localhost:8000/tournaments/me", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }),
+          fetch("http://localhost:8000/tournaments/created-by-me", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }),
+          fetch("http://localhost:8000/profile/me", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }),
+          fetch("http://localhost:8000/profile/activities", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }),
+        ]);
 
+        const joinedData = await joinedRes.json();
+        const createdData = await createdRes.json();
+        const friendActivityData = await friendRes.json();
 
-const upcomingTournaments = [
+        setJoinedTournaments(joinedData ?? []);
+        setCreatedTournaments(createdData ?? []);
+        setFriendActivities(Array.isArray(friendActivityData) ? friendActivityData : []);
+      } catch (error) {
+        console.error("Fehler beim Laden der Daten:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    {
-      title: 'Apex Legends Cup',
-      game: 'APEX LEGENDS',
-      participants: '48/64 SPIELER',
-      timeLeft: 'IN 2 TAGEN',
-      prizePool: '€5,000'
-    },
-    {
-      title: 'CS:GO2 Community Challange',
-      game: 'Couter Strike Global Offensiv 2',
-      participants: '28/32 TEAMS',
-      timeLeft: 'IN 5 TAGEN',
-      prizePool: '€3,500'
-    },
-    {
-      title: 'FIFA Weekend GamerLeague',
-      game: 'FIFA 25',
-      participants: '12/16 SPIELER',
-      timeLeft: 'IN 1 TAG',
-      prizePool: '€2,000'
-    }
-  ];
+    fetchData();
+  }, []);
 
-  var selectedPage = {
+  const selectedPage = {
     0: '/user/profile',
     1: '/home',
-    2: '/tournements/list',
+    2: '/tournaments/list',
     3: '/user/friends',
     4: '/games/all',
+  };
+
+  const renderPosts = () => {
+    const allPosts = [
+      ...joinedTournaments.map(t => ({
+        type: 'joined' as const,
+        content: `Beigetreten zu "${t.name}"`,
+        date: new Date(t.joined_at || t.created_at || t.date),
+      })),
+      ...createdTournaments.map(t => ({
+        type: 'created' as const,
+        content: `Erstellt: "${t.name}"`,
+        date: new Date(t.created_at || t.date),
+      })),
+      ...friendActivities.map(a => ({
+        type: a.type as 'joined' | 'created',
+        content: `${a.username} ${a.type === 'joined' ? 'ist beigetreten zu' : 'hat erstellt'}: "${a.tournament}"`,
+        date: new Date(a.date),
+      })),
+    ];
+
+    allPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+if (allPosts.length === 0) {
+    return (
+      <div className="mt-10 text-center text-gray-400">
+        <p>Dein Feed ist aktuell leer.</p>
+        <p>Erstelle ein Turnier oder tritt einem bei, um Aktivitäten zu sehen!</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex max-h-screen">
-      {/* Left Sidebar - Fixed */}
-      <FullSideBar which_Page={selectedPage[1]}/>
+    <div className="flex flex-col gap-3 mt-6">
+      {allPosts.map((post, index) => (
+        <SimplePost key={index} content={post.content} type={post.type} date={post.date} />
+      ))}
+    </div>
+  );
+  }
 
-      {/* Main Content Area */}
-      <div className="flex flex-1"> {/* Adjust ml-16 based on your Sidebar width */}
-        {/* Middle Content - Scrollable */}
+  return (
+    <div className="bg-[#252641] flex max-h-screen">
+      <FullSideBar which_Page={selectedPage[1]} />
+      <div className="flex flex-1">
         <main className="flex-1 mr-20 ml-20 overflow-y-scroll no-scrollbar">
-          <Post/>
-          <Post/>
-          <Post/>
-          <Post/>
+          {loading ? (
+            <p className="text-white mt-6">Lade personalisierten Feed...</p>
+          ) : (
+            renderPosts()
+          )}
         </main>
-        
-        <HomeShortCutPanel/>
+        <HomeShortCutPanel />
       </div>
     </div>
   );

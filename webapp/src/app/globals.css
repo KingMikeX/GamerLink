@@ -44,3 +44,15 @@ body {
 .fill_screen {
   height: 91.2vh;
 }
+
+/* Style für Number Input Pfeile im Dark Mode */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  filter: invert(1); /* Macht sie hell (weiß) */
+}
+
+/* Für Firefox */
+input[type="number"] {
+  color-scheme: dark;
+}

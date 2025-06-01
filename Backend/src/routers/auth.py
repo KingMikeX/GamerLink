@@ -34,5 +34,6 @@ def protected_route(current_user: User = Depends(get_current_user)):
     return {
         "message": f"Willkommen {current_user.username}!",
         "user_id": str(current_user.id),
+        "username": current_user.username,
         "email": current_user.email
     }
