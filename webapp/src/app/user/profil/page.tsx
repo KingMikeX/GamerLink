@@ -277,7 +277,7 @@ export default function ProfilePage() {
 
 
         <section id="section-personal">
-          <h2 className="text-[#da4ecc] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PERSÖNLICHE INFORMATIONEN</h2>
+          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PERSÖNLICHE INFORMATIONEN</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div className="flex flex-col">
               <label className="text-sm font-bold text-white">Benutzername</label>
@@ -304,7 +304,7 @@ export default function ProfilePage() {
           </div>
         </section>
         <section id="section-gaming">
-          <h2 className="text-[#da4ecc] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">GAMING-PROFIL</h2>
+          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">GAMING-PROFIL</h2>
           <div className="flex flex-col mb-2">
             <label className="text-sm font-bold text-white">Lieblingsspiele</label>
             <div className="flex flex-wrap gap-2 mt-1">
@@ -319,7 +319,7 @@ export default function ProfilePage() {
             <label className="text-sm font-bold text-white">Neues Spiel</label>
             <div className="flex gap-2">
               <input name="newGame" value={profile.newGame} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md w-full mr-130" />
-              <button onClick={handleAddGame} className="bg-[#dd17c9] hover:bg-pink-600 px-6 py-2 rounded-md text-xs">HINZUFÜGEN</button>
+              <button onClick={handleAddGame} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-md text-xs">HINZUFÜGEN</button>
             </div>
           </div>
 
@@ -358,13 +358,13 @@ export default function ProfilePage() {
             <label className="text-sm font-bold text-white">Neue Sprache hinzufügen</label>
             <div className="flex gap-2">
               <input name="newLanguage" value={profile.newLanguage} onChange={handleChange} className="bg-[#1A1C2D] px-4 py-2 rounded-md w-full mr-130" />
-              <button onClick={handleAddLanguage} className="bg-[#dd17c9] hover:bg-pink-600 px-6 py-2 rounded-md text-xs ml">HINZUFÜGEN</button>
+              <button onClick={handleAddLanguage} className="bg-[#dd17c9] hover:bg-[#aa0d9d] font-semibold px-6 py-2 rounded-md text-xs ml">HINZUFÜGEN</button>
             </div>
           </div>
         </section>
 
         <section id="section-social">
-          <h2 className="text-[#da4ecc] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">SOCIAL MEDIA & GAMING ACCOUNT</h2>
+          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">SOCIAL MEDIA & GAMING ACCOUNT</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
               <label className="text-sm font-bold text-white">Discord</label>
@@ -386,22 +386,22 @@ export default function ProfilePage() {
         </section>
 
         <section id="section-privacy">
-          <h2 className="text-[#da4ecc] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PRIVATSPHÄRE-EINSTELLUNGEN</h2>
+          <h2 className="text-[#FF4EF1] text-sm font-bold border-b border-[#2E314A] pb-2 mb-4">PRIVATSPHÄRE-EINSTELLUNGEN</h2>
           <div className="space-y-4">
             <label className="flex items-center space-x-3">
-              <input type="checkbox" checked={profile.privacy.public} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, public: !p.privacy.public } }))} className="accent-pink-500 w-5 h-5" />
+              <input type="checkbox" checked={profile.privacy.public} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, public: !p.privacy.public } }))} className="accent-[#dd17c9] w-5 h-5" />
               <span className="text-white font-semibold">Profil öffentlich sichtbar</span>
             </label>
             <label className="flex items-center space-x-3">
-              <input type="checkbox" checked={profile.privacy.online} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, online: !p.privacy.online } }))} className="accent-pink-500 w-5 h-5" />
+              <input type="checkbox" checked={profile.privacy.online} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, online: !p.privacy.online } }))} className="accent-[#dd17c9] w-5 h-5" />
               <span className="text-white font-semibold">Online-Status anzeigen</span>
             </label>
             <label className="flex items-center space-x-3">
-              <input type="checkbox" checked={profile.privacy.emailNotifications} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, emailNotifications: !p.privacy.emailNotifications } }))} className="accent-pink-500 w-5 h-5" />
+              <input type="checkbox" checked={profile.privacy.emailNotifications} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, emailNotifications: !p.privacy.emailNotifications } }))} className="accent-[#dd17c9] w-5 h-5" />
               <span className="text-white font-semibold">E-Mail-Benachrichtigungen erhalten</span>
             </label>
             <label className="flex items-center space-x-3">
-              <input type="checkbox" checked={profile.privacy.friendRequests} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, friendRequests: !p.privacy.friendRequests } }))} className="accent-pink-500 w-5 h-5" />
+              <input type="checkbox" checked={profile.privacy.friendRequests} onChange={() => setProfile(p => ({ ...p, privacy: { ...p.privacy, friendRequests: !p.privacy.friendRequests } }))} className="accent-[#dd17c9] w-5 h-5" />
               <span className="text-white font-semibold">Freundschaftsanfragen erlauben</span>
             </label>
           </div>
@@ -414,7 +414,7 @@ export default function ProfilePage() {
       >
         ABBRECHEN
       </button>
-        <button onClick={handleSave} className="px-6 py-2 rounded-md bg-[#dd17c9] text-white hover:bg-pink-600">ÄNDERUNGEN SPEICHERN</button>
+        <button onClick={handleSave} className="px-6 py-2 font-semibold rounded-md bg-[#dd17c9] text-white hover:bg-[#aa0d9d]">ÄNDERUNGEN SPEICHERN</button>
 
 </section>
       </main>

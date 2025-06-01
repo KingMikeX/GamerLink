@@ -112,7 +112,7 @@ export default function FriendsPage() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex bg-[#252641]" >
       <FullSideBar which_Page={selectedPage[3]} />
 
       <div className="flex-1 p-10 text-white">
@@ -134,8 +134,8 @@ export default function FriendsPage() {
                     <li key={req.id} className="bg-[#1e1f3d] p-4 rounded-xl flex justify-between items-center">
                       <span>{req.sender_name}</span>
                       <div className="space-x-2">
-                        <button onClick={() => handleAccept(req.id)} className="bg-green-600 px-3 py-1 rounded">Annehmen</button>
-                        <button onClick={() => handleDecline(req.id)} className="bg-red-600 px-3 py-1 rounded">Ablehnen</button>
+                        <button onClick={() => handleAccept(req.id)} className="bg-green-600 hover:bg-green-800 rounded-xl font-semibold px-3 py-1 rounded">Annehmen</button>
+                        <button onClick={() => handleDecline(req.id)} className="bg-red-600 hover:bg-red-800 rounded-xl font-semibold px-3 py-1 rounded">Ablehnen</button>
                       </div>
                     </li>
                   ))}
@@ -172,7 +172,7 @@ export default function FriendsPage() {
                           });
                           location.reload(); // aktualisieren
                         }}
-                        className="bg-red-600 px-3 py-1 rounded"
+                        className="bg-red-600 hover:bg-red-800 rounded-xl text-white font-semibold px-3 py-1 rounded"
                       >
                         Entfernen
                       </button>

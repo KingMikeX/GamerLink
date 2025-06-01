@@ -75,8 +75,8 @@ const [trendingGames, setTrendingGames] = useState([]);
       {/* Upcoming Tournaments */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="flex items-center font-stretch-90% text-white text-lg">
-            <Trophy size={16} className="mr-2 text-pink-500" />
+          <h2 className="flex font-semibold items-center text-white text-lg">
+            <Trophy size={16} className="mr-2 text-pink-500 font-semibold" />
             Anstehende Turniere
           </h2>
         </div>
@@ -94,7 +94,7 @@ const [trendingGames, setTrendingGames] = useState([]);
                   <div
                     key={index}
                     onClick={() => router.push(`/tournements/${t.id}/details`)}
-                    className="group bg-[#1e1f3d] hover:bg-[#2a2b4c] p-4 border border-indigo-700/30 hover:border-purple-500 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
+                    className="group bg-[#1A1A3D] hover:bg-[#2a2b4c] p-4 border border-indigo-700/30 hover:border-purple-500 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-lg"
                   >
                 <div className="mb-1">
                   <h3 className="font-semibold text-white group-hover:text-pink-400 text-sm truncate">
@@ -103,7 +103,7 @@ const [trendingGames, setTrendingGames] = useState([]);
                 </div>
                 <p className="text-indigo-300 text-xs mb-3">{game}</p>
                 <div className="flex justify-between items-center text-[11px] font-medium">
-                    <span className="bg-pink-900/40 text-pink-300 px-2 py-1 rounded-md">
+                    <span className="bg-[#dd17c9] text-white font-semibold px-2 py-1 rounded-md">
                       {t.participants_count ?? 0}/{t.max_players} Spieler
                     </span>
                   <span className="bg-blue-900/40 text-blue-300 px-2 py-1 rounded-md">
@@ -131,8 +131,8 @@ const [trendingGames, setTrendingGames] = useState([]);
               }
             }}
 
-            className="bg-gradient-to-r hover:bg-gradient-to-r from-pink-600 hover:from-pink-700 to-purple-600 hover:to-purple-500 shadow-md hover:shadow-inner hover:shadow-pink-700 mt-6 py-3 rounded-xl w-full text-white transition-all"
-          >
+            className=" bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold mt-4 py-3 rounded-xl w-full transition-colors">
+          
             <span className="font-semibold font-stretch-150%">Turnier erstellen</span>
           </button>
         </div>
@@ -141,7 +141,7 @@ const [trendingGames, setTrendingGames] = useState([]);
       {/* Trending Games */}
       <div className="mb-8 pt-5 border-t-2 border-t-gray-500">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="flex items-center text-white text-lg">
+          <h2 className="flex font-semibold items-center text-white text-lg">
             <div className="bg-green-500 mr-2 rounded-full w-3 h-3 animate-pulse"></div>
             Spiele im Trend
           </h2>
@@ -151,9 +151,11 @@ const [trendingGames, setTrendingGames] = useState([]);
           {trendingGames.map((game, index) => (
             <div
               key={index}
-              className="group flex items-center bg-indigo-900/30 p-3 border border-indigo-800/30 hover:border-indigo-700/50 rounded-xl transition-all cursor-pointer"
+              className="group flex items-center bg-[#1A1A3D] p-3 border border-indigo-800/30 hover:border-indigo-700/50 rounded-xl transition-all cursor-pointer"
             >
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md rounded-lg w-12 h-12"></div>
+              <div className="bg-white rounded-lg w-12 h-12 flex items-center justify-center overflow-hidden">
+                <img src="/Symbol_Gamerlink.png" alt="Symbol_Gamerlink" className="w-8 h-8 object-contain" />
+              </div>
               <div className="flex-1 ml-3">
                 <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
                   {game.name}

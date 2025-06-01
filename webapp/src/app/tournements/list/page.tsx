@@ -35,33 +35,43 @@ export default function TournamentList() {
     4: "/games/all",
   };
 
-  useEffect(() => {
-    const fetchTournaments = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/tournaments", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!res.ok) throw new Error("Fehler beim Laden der Turniere.");
-        const data = await res.json();
+useEffect(() => {
+  const fetchTournaments = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/tournaments", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!res.ok) throw new Error("Fehler beim Laden der Turniere.");
+      const data = await res.json();
 
-        // Nach Startdatum sortieren (neueste zuerst)
-        const sorted = data.sort((a: Tournament, b: Tournament) =>
-          new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-        );
+      const now = new Date();
 
-        setTournaments(sorted);
-      } catch (err) {
-        setError("Turniere konnten nicht geladen werden.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const filtered = data.filter((t: Tournament) => {
+        const startTime = new Date(t.start_time);
+        const endTime = new Date(startTime.getTime() + t.duration_minutes * 60 * 1000);
+        const expirationTime = new Date(endTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+        return expirationTime > now;
+      });
 
-    fetchTournaments();
-  }, []);
+      // Nach Startdatum sortieren (neueste zuerst)
+      const sorted = filtered.sort((a: Tournament, b: Tournament) =>
+        new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+      );
+
+      setTournaments(sorted);
+    } catch (err) {
+      setError("Turniere konnten nicht geladen werden.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchTournaments();
+}, []);
+
 
   const fetchTournamentDetails = async (id: string) => {
     try {
@@ -130,7 +140,7 @@ export default function TournamentList() {
                 alert("Nur Admins oder Abonnenten dürfen Turniere erstellen.");
               }
             }}
-            className="bg-[#dd17c9] hover:bg-pink-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
+            className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold px-5 py-2 rounded-xl transition-colors"
           >
             Turnier erstellen
           </button>
@@ -158,7 +168,7 @@ export default function TournamentList() {
               <div className="flex gap-3">
                 <button
                   onClick={() => handleJoin(selectedTournament.id)}
-                  className="px-5 py-2 bg-[#dd17c9] hover:bg-pink-600 rounded-full text-white font-bold text-sm"
+                  className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-full text-white font-bold text-sm"
                   disabled={joining}
                 >
                   {joining ? "Wird beigetreten..." : "JETZT ANMELDEN"}
@@ -186,15 +196,26 @@ export default function TournamentList() {
                 className="bg-[#1A1A3D] rounded-2xl shadow-lg p-5 relative hover:scale-[1.02] transition-transform cursor-pointer"
                 onClick={() => fetchTournamentDetails(t.id)}
               >
-                <div className="absolute top-4 right-4 bg-orange-400 text-black text-xs font-bold px-3 py-1 rounded-full">
-                  {new Date(t.start_time) > new Date() ? "BALD" : "LIVE"}
-                </div>
+                  {(() => {
+                    const startTime = new Date(t.start_time);
+                    const now = new Date();
+                    const isUpcoming = startTime > now;
+                    const badgeText = isUpcoming ? "BALD" : "LIVE";
+                    const badgeColor = isUpcoming ? "bg-orange-400 text-black" : "bg-red-500 text-white";
+
+                    return (
+                      <div className={`absolute top-4 right-4 ${badgeColor} text-xs font-bold px-3 py-1 rounded-full`}>
+                        {badgeText}
+                      </div>
+                    );
+                  })()}
+
                 <div className="bg-gray-700 h-32 w-full rounded-xl mb-4" />
-                <p className="text-xs text-purple-400 font-bold">{t.game}</p>
+                <p className="text-xs text-[#FF4EF1] font-bold">{t.game}</p>
                 <h2 className="text-lg font-semibold">{t.name}</h2>
                 <p className="text-sm text-gray-300">{t.max_players} SPIELER</p>
                 <p className="text-sm text-gray-300">{t.niveau.toUpperCase()}</p>
-                <p className="text-sm text-green-400 font-bold mt-2">
+                <p className="text-sm text-[#39ff14] font-bold mt-2">
                   Start: {new Date(t.start_time).toLocaleString("de-DE")}
                 </p>
               </div>

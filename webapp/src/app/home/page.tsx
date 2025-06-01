@@ -96,7 +96,7 @@ if (allPosts.length === 0) {
   }
 
   return (
-    <div className="flex max-h-screen">
+    <div className="bg-[#252641] flex max-h-screen">
       <FullSideBar which_Page={selectedPage[1]} />
       <div className="flex flex-1">
         <main className="flex-1 mr-20 ml-20 overflow-y-scroll no-scrollbar">

@@ -14,7 +14,7 @@ export default function Logout() {
     <div className="flex items-center">
       <button
         onClick={handleLogout}
-        className="bg-[#4F46E5] hover:bg-[#4338CA] transition-colors text-white font-medium px-5 py-2 rounded-full text-sm"
+        className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold px-5 py-2 rounded-xl transition-colors"
       >
         Logout
       </button>

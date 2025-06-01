@@ -35,7 +35,7 @@ export default function SendFriendRequest() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage('Anfrage gesendet ✅');
+        setMessage('Anfrage gesendet');
       } else {
         if (Array.isArray(data.detail)) {
           const firstError = data.detail[0]?.msg || 'Fehler beim Senden.';
@@ -63,7 +63,7 @@ export default function SendFriendRequest() {
       />
       <button
         onClick={sendRequest}
-        className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded w-full"
+        className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white font-semibold rounded-xl transition-colors py-2 px-4 rounded w-full"
       >
         Anfrage senden
       </button>

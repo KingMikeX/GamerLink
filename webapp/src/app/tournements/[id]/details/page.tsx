@@ -301,7 +301,7 @@ const isOwnerOrAdmin = currentUsername === tournament.created_by_username || isA
         {!isParticipant && (
         <div className="mb-8">
           <button
-            className="px-5 py-2 bg-[#dd17c9] hover:bg-pink-600 rounded-full text-white font-bold text-sm"
+            className="px-5 py-2 bg-[#dd17c9] hover:bg-[#aa0d9d] rounded-full text-white font-bold text-sm"
             onClick={handleJoin}
             disabled={joining}
           >

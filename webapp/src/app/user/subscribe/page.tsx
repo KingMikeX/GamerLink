@@ -79,17 +79,17 @@ export default function SubscribePage() {
           <>
             <p className="text-lg mb-4">
               Aktuelle Rolle:{" "}
-              <span className="font-semibold text-purple-400">{role}</span>
+              <span className="font-semibold text-[#FF4EF1]">{role}</span>
             </p>
 
             <p className="text-gray-300 mb-6">
-              🎉 In der Anfangsphase ist das <strong>Subscriben</strong> kostenlos!
+              In der Anfangsphase ist das <strong>Subscriben</strong> kostenlos!
               Unterstütze unser Projekt und erhalte exklusive Features.
             </p>
 
             <div className="flex gap-4">
               <button
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-xl font-semibold"
+                className="bg-[#dd17c9] hover:bg-[#aa0d9d] text-white px-6 py-2 rounded-xl font-semibold"
                 onClick={handleSubscribe}
               >
                 Subscribe
@@ -102,7 +102,7 @@ export default function SubscribePage() {
               </button>
             </div>
 
-            {message && <p className="text-green-400 mt-4">{message}</p>}
+            {message && <p className="text-[#39ff14] mt-4">{message}</p>}
           </>
         )}
       </div>
