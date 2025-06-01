@@ -20,6 +20,6 @@ Base.metadata.create_all(bind=engine)
 print("✅ Tabellen wurden neu erstellt.")
 
 
-upload_dir = "src/uploads/profile_pictures"
+upload_dir = "Backend/src/uploads/profile_pictures"
 os.makedirs(upload_dir, exist_ok=True)
 print(f"📁 Ordner '{upload_dir}' überprüft bzw. erstellt.")
