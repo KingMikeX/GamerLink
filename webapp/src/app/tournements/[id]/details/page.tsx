@@ -69,7 +69,7 @@ export default function TournamentDetailsPage() {
 const handleJoin = async () => {
   try {
     setJoining(true);
-    const res = await fetch(`http://localhost:8000/tournaments/${id}/join`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}/join`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -134,7 +134,7 @@ const saveTeamNames = async (matchId: string) => {
   if (Object.keys(payload).length === 0) return; // nichts zu speichern
 
   try {
-    const res = await fetch(`http://localhost:8000/tournaments/${id}/matches/${matchId}/rename-teams`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}/matches/${matchId}/rename-teams`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +168,7 @@ const saveTeamNames = async (matchId: string) => {
       winnerTeamId = match.team_b_id!;
     }
 
-    const res = await fetch(`http://localhost:8000/tournaments/${id}/matches/${matchId}/result`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}/matches/${matchId}/result`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -202,7 +202,7 @@ useEffect(() => {
 
   const fetchCurrentUser = async () => {
     try {
-      const res = await fetch("http://localhost:8000/profile/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/me`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -221,17 +221,17 @@ useEffect(() => {
     await fetchCurrentUser(); // 👈 zuerst Benutzer laden
 
     try {
-      const resTournament = await fetch(`http://localhost:8000/tournaments/${id}`, {
+      const resTournament = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const tournamentData = await resTournament.json();
 
-      const resParticipants = await fetch(`http://localhost:8000/tournaments/${id}/participants`, {
+      const resParticipants = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}/participants`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const participantData = await resParticipants.json();
 
-      const resMatches = await fetch(`http://localhost:8000/tournaments/${id}/matches`, {
+      const resMatches = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}/matches`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const matchData = await resMatches.json();

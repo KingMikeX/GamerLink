@@ -34,13 +34,13 @@ export default function FriendsPage() {
         const currentUserId = localStorage.getItem("user_id");
 
         const [incomingRes, sentRes, acceptedRes] = await Promise.all([
-          fetch("http://localhost:8000/profile/friends/requests/incoming", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/requests/incoming`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:8000/profile/friends/requests/sent", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/requests/sent`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:8000/profile/friends/list", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/list`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -50,10 +50,10 @@ export default function FriendsPage() {
         const acceptedData = await acceptedRes.json(); // PublicUserProfile[]
 
         const enrich = async (req: FriendRequest) => {
-          const senderRes = await fetch(`http://localhost:8000/profile/by-id/${req.sender_id}`, {
+          const senderRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/by-id/${req.sender_id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const receiverRes = await fetch(`http://localhost:8000/profile/by-id/${req.receiver_id}`, {
+          const receiverRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/by-id/${req.receiver_id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -95,7 +95,7 @@ export default function FriendsPage() {
 
   const handleAccept = async (requestId: string) => {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:8000/profile/friends/accept/${requestId}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/accept/${requestId}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -104,7 +104,7 @@ export default function FriendsPage() {
 
   const handleDecline = async (requestId: string) => {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:8000/profile/friends/decline/${requestId}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/decline/${requestId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -168,7 +168,7 @@ export default function FriendsPage() {
                       <button
                         onClick={async () => {
                           const token = localStorage.getItem("token");
-                          await fetch(`http://localhost:8000/profile/friends/remove/${req.id}`, {
+                          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/remove/${req.id}`, {
                             method: "DELETE",
                             headers: { Authorization: `Bearer ${token}` },
                           });

@@ -108,7 +108,7 @@ export default function CreateTournament() {
 
     console.log("📤 Final Payload:", payload);
 
-    const res = await fetch("http://localhost:8000/tournaments/create", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

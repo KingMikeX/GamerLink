@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE_URL = "http://localhost:8000"; // Passe ggf. deine URL an
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`; // Passe ggf. deine URL an
 
 // Typdefinition für den Profile-Zustand
 interface ProfileState {
@@ -225,7 +225,7 @@ export default function ProfilePage() {
         <label htmlFor="profilePicUpload" className="cursor-pointer">
           {profile.image ? (
             <img
-              src={`http://localhost:8000${profile.image}`}
+              src={`${process.env.NEXT_PUBLIC_BASE_URL}${profile.image}`}
               alt="Profilbild"
               className="w-28 h-28 rounded-full border border-[#555] object-cover hover:opacity-80 transition"
             />
@@ -250,7 +250,7 @@ export default function ProfilePage() {
             formData.append("file", file);
 
             try {
-              const res = await fetch("http://localhost:8000/profile/upload-picture", {
+              const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/upload-picture`, {
                 method: "POST",
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
