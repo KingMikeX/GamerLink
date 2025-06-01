@@ -1,3 +1,4 @@
+
 {
   "rewrites": [
     {
@@ -12,15 +13,9 @@
       "config": { "outputDirectory": "webapp" }
     },
     {
-      "src": "Backend/main.py",
+      "src": "Backend/main.py", 
       "use": "@vercel/python",
       "config": { "outputDirectory": "Backend" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/webapp/$1"
     }
   ],
   "installCommand": "npm install --prefix webapp && pip install -r Backend/requirements.txt"
