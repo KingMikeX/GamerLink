@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "webapp/next.config.js",
+      "src": "webapp/package.json",
       "use": "@vercel/next"
     },
     {
