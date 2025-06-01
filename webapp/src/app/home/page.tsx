@@ -17,16 +17,16 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [joinedRes, createdRes, profileRes, friendRes] = await Promise.all([
-          fetch("http://localhost:8000/tournaments/me", {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/me`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem(`token`)}` },
           }),
-          fetch("http://localhost:8000/tournaments/created-by-me", {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/created-by-me`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem(`token`)}` },
           }),
-          fetch("http://localhost:8000/profile/me", {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/me`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem(`token`)}` },
           }),
-          fetch("http://localhost:8000/profile/activities", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/activities`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           }),
         ]);

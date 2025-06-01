@@ -10,7 +10,7 @@ export default function SubscribePage() {
 
   const fetchRole = async () => {
     try {
-      const res = await fetch("http://localhost:8000/profile/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/me`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -29,7 +29,7 @@ export default function SubscribePage() {
 
   const handleSubscribe = async () => {
     try {
-      const res = await fetch("http://localhost:8000/profile/subscribe", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/subscribe`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +47,7 @@ export default function SubscribePage() {
 
   const handleUnsubscribe = async () => {
     try {
-      const res = await fetch("http://localhost:8000/profile/unsubscribe", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/unsubscribe`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

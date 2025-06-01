@@ -38,7 +38,7 @@ export default function TournamentList() {
 useEffect(() => {
   const fetchTournaments = async () => {
     try {
-      const res = await fetch("http://localhost:8000/tournaments", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -75,7 +75,7 @@ useEffect(() => {
 
   const fetchTournamentDetails = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/tournaments/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -94,7 +94,7 @@ useEffect(() => {
   const handleJoin = async (tournamentId: string) => {
     try {
       setJoining(true);
-      const res = await fetch(`http://localhost:8000/tournaments/${tournamentId}/join`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/${tournamentId}/join`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -125,7 +125,7 @@ useEffect(() => {
           <button
             onClick={async () => {
               const token = localStorage.getItem("token");
-              const res = await fetch("http://localhost:8000/profile/me", {
+              const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/me`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const user = await res.json();

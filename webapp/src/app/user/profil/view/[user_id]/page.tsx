@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import FullSideBar from "@/components/FullSideBar";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 
 interface ProfileState {
   image?: string;
