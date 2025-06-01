@@ -1,28 +1,12 @@
-
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/backend/(.*)"
-    }
-  ],
   "builds": [
     {
       "src": "webapp/package.json",
       "use": "@vercel/next",
       "config": {
-        "outputDirectory": "webapp",
-        "runtime": "nodejs18.x"
-      }
-    },
-    {
-      "src": "backend/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "outputDirectory": "backend",
-        "runtime": "python3.10"
+        "outputDirectory": "webapp"
       }
     }
   ],
-  "installCommand": "pip install -r Backend/requirements.txt --verbose"
+  "installCommand": "npm install --prefix webapp"
 }
