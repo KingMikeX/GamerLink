@@ -16,8 +16,9 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
    allow_origins=[
-    "http://localhost:3000",
-    "https://gamerlinkfrontend.vercel.app"  # <- deine echte Frontend-URL
+    #"http://localhost:3000",
+    #"https://gamerlinkfrontend.vercel.app"  # <- deine echte Frontend-URL
+    "*"
 ],
     allow_credentials=True,
     allow_methods=["*"],
