@@ -19,5 +19,5 @@
       "dest": "webapp/$1"
     }
   ],
-  "installCommand": "pip install -r Backend/src/requirements.txt && npm install"
+  "installCommand": "npm install --prefix webapp && pip install -r /Backend/src/requirements.txt"
 }
