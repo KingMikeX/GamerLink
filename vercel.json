@@ -1,18 +1,14 @@
 {
     "builds": [
       {
-        "src": "Backend/src/requirements.txt",
-        "use": "@vercel/python",
-        "config": {
-          "installCommand": "echo '--- Starting Python Build ---' && ls -lisaR . && echo '--- Attempting pip install ---' && pip install -r Backend/src/requirements.txt",
-          "pythonVersion": "3.9"
-        }
+        "src": "Backend/src/main.py",
+        "use": "@vercel/python"
       },
       {
         "src": "webapp/package.json",
         "use": "@vercel/next",
         "config": {
-          "installCommand": "npm install"
+          "installCommand": "npm install && python3 -m pip install -r ../Backend/src/requirements.txt"
         }
       }
     ],
