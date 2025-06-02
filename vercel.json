@@ -2,22 +2,28 @@
   "builds": [
     {
       "src": "Backend/src/main.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "installCommand": "pip install -r Backend/src/requirements.txt",
+        "pythonVersion": "3.9"
+      }
     },
     {
       "src": "webapp/package.json",
-      "use": "@vercel/next"
+      "use": "@vercel/next",
+      "config": {
+        "installCommand": "npm install"
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.)",
+      "src": "/api/(.*)",
       "dest": "Backend/src/main.py"
     },
     {
-      "src": "/(.)",
+      "src": "/(.*)",
       "dest": "webapp/$1"
     }
-  ],
-  "installCommand": "npm install --prefix webapp && pip install -r /Backend/src/requirements.txt"
+  ]
 }
