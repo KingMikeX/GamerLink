@@ -2,13 +2,16 @@
     "builds": [
       {
         "src": "Backend/src/main.py",
-        "use": "@vercel/python"
+        "use": "@vercel/python",
+        "config": {
+          "installCommand": "python3 -m pip install -r Backend/src/requirements.txt"
+        }
       },
       {
         "src": "webapp/package.json",
         "use": "@vercel/next",
         "config": {
-          "installCommand": "npm install && python3 -m pip install -r Backend/src/requirements.txt"
+          "installCommand": "npm install"
         }
       }
     ],
