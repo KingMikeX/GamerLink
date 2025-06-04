@@ -29,5 +29,5 @@ Schritte Zum Starten:
     4. In einem anderen Terminal mit dem Plus rechts bei dem Terminal da wo Bash steht ein weiteres Terminal öffnen
         > cd ../Backend
         > fastapi dev main.py
-
+      
 Fals was schreibt mich an, wenn wir nicht schon alle online sind.   ChatGpt
