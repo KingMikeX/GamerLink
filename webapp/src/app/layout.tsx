@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
