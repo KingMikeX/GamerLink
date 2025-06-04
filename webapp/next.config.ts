@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    NEXT_PUBLIC_BASE_URL: "/api", // für client UND server
+    NEXT_PUBLIC_BASE_URL: "https://gamerlinkbackend.onrender.com", // für client UND server
   },
 };
 
