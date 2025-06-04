@@ -15,9 +15,18 @@ export default function SimplePost({ content, type = 'created', date }: SimplePo
     interest: 'text-green-400',
   };
 
-  const timestamp = date ? new Date(date) : new Date();
+    const timestamp = date ? new Date(date) : new Date();
+    const formattedTimestamp = timestamp.toLocaleString('de-DE', {
+      timeZone: 'Europe/Berlin',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
 
-  const formattedTimestamp = `${timestamp.toLocaleDateString('de-DE')} ${timestamp.toLocaleTimeString('de-DE', { hour12: false })}`;
 
   return (
     <div className="bg-[#121428] text-[#d4d4d4] font-mono text-sm p-3 rounded-md shadow-sm border border-[#333]">
