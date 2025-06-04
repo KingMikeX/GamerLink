@@ -1,5 +1,5 @@
-// src/app/tournaments/layout.tsx
+export const dynamicParams = true;
 
-export default function TournamentsLayout({ children }: { children: React.ReactNode }) {
+export default function TournementsLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
