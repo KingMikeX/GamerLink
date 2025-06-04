@@ -30,7 +30,7 @@ export function SidebarItem({ icon, text, active, onClick, selected }) {
                     onClick={onClick}>
         {icon}
         <span
-          className={`overflow-hidden font-semibold transition-all text-[#FF4EF1] ${ expanded ? "w-52 ml-3" : "w-0" }`}>
+          className={`hidden md:flex overflow-hidden font-semibold transition-all text-[#FF4EF1] ${ expanded ? "w-52 ml-3" : "w-0" }`}>
           {text}
         </span>
       </li>
@@ -43,7 +43,7 @@ export function SidebarItem({ icon, text, active, onClick, selected }) {
                     onClick={onClick}>
         {icon}
         <span
-          className={`overflow-hidden transition-all ${
+          className={`hidden md:flex overflow-hidden transition-all ${
             expanded ? "w-52 ml-3" : "w-0"
           }`}
         >
