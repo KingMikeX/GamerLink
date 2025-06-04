@@ -48,9 +48,8 @@ export default function FullSideBar({which_Page}) {
     else return false
   }
 
-if(which_Page == 0)re
   return (
-    <aside className="hidden top-0 left-0 z-10 md:flex">
+    <aside className="top-0 left-0 z-10 flex">
     <div className="bg-[#121428] border-gray-800 border-t">
         <Sidebar>
         <SidebarItem icon={<User size={20} />} text="Profil" active onClick={goToProfil} selected={is_page_selected(selectedPage[which_Page], 0)}/>
