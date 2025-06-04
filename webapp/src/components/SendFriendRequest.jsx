@@ -8,7 +8,7 @@ export default function SendFriendRequest() {
   const sendRequest = async () => {
     try {
       // Erst die ID anhand des Usernamens abrufen
-      const profileRes = await fetch(`http://localhost:8000/profile/${username}`, {
+      const profileRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/${username}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -23,7 +23,7 @@ export default function SendFriendRequest() {
       const receiverId = profileData.user_id || profileData.id;
 
       // Anfrage senden
-      const res = await fetch('http://localhost:8000/profile/friends/request', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/friends/request`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

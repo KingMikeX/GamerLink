@@ -19,7 +19,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.length > 1) {
-        fetch(`http://localhost:8000/search?query=${encodeURIComponent(searchTerm)}`, {
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/search?query=${encodeURIComponent(searchTerm)}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
