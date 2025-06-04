@@ -12,7 +12,7 @@ const [trendingGames, setTrendingGames] = useState([]);
   useEffect(() => {
     const fetchTournaments = async () => {
       try {
-        const res = await fetch("http://localhost:8000/tournaments", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -42,7 +42,7 @@ const [trendingGames, setTrendingGames] = useState([]);
   useEffect(() => {
   const fetchTrendingGames = async () => {
     try {
-      const res = await fetch("http://localhost:8000/tournaments/stats/popular_games", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tournaments/stats/popular_games`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -119,7 +119,7 @@ const [trendingGames, setTrendingGames] = useState([]);
           <button
             onClick={async () => {
               const token = localStorage.getItem("token");
-              const res = await fetch("http://localhost:8000/profile/me", {
+              const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/profile/me`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const user = await res.json();
